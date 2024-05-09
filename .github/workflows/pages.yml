@@ -9,7 +9,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Ensures you pull all history for version comparisons
 
@@ -24,17 +24,15 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Copy files to docs
-        run: |
-          rm -rf docs
-          cp -r build docs
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
-      - name: Commit and Push changes
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add docs
-          git commit -m "Deploy to GitHub Pages" -a || echo "No changes to commit"
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Specify the path to your build directory
+          path: './build'  # Update this line to point to your 'build' folder
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
