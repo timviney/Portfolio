@@ -24,7 +24,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Ensures you pull all history for version comparisons
@@ -36,14 +35,30 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        
+
       - name: Build
         run: npm run build
+        
+      # Optionally, save the build artifacts for the deploy job
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: build
 
   deploy:
+    needs: build  # This job needs to wait for the 'build' job to complete
     runs-on: ubuntu-latest
     steps:
-    
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+          path: build
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
@@ -51,7 +66,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # Specify the path to your build directory
-          path: './build'  # Update this line to point to your 'build' folder
+          path: './build'  # The build folder is now set to upload
 
       - name: Deploy to GitHub Pages
         id: deployment
