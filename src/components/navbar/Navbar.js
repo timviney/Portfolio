@@ -13,7 +13,7 @@ const Navbar = () => {
     <div className="w-full h-24 sticky top-0 z-50 bg-bodyColor mx-auto flex justify-between items-center font-titleFont border-b-[1px] border-b-gray-600">
       <div className="w-full h-24 sticky top-0 z-50 bg-bodyColor mx-auto flex justify-between items-center font-titleFont border-b-[1px] border-b-gray-600">
         <Link to="home" spy={true} smooth={true} offset={-70} duration={500} className="inline-block h-full cursor-pointer">
-          <img src={logo} alt="logo" className="h-full max-w-xs" />  {/* max-w-xs can be changed as needed */}
+          <img src={logo} alt="logo" className="h-full max-w-xxs" />
         </Link>
       </div>
       <div>
@@ -45,13 +45,11 @@ const Navbar = () => {
         {showMenu && (
           <div className="w-[80%] h-screen overflow-scroll absolute top-0 left-0 bg-gray-900 p-4 scrollbar-hide">
             <div className="flex flex-col gap-8 py-2 relative">
+              <div className="w-full h-24">
+                <empty></empty>
+              </div>
               <div>
-                <img className="w-32" src={me} alt="me" />
-                <p className="text-sm text-gray-400 mt-2">
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                  Earum soluta perspiciatis molestias enim cum repellat, magnam
-                  exercitationem distinctio aliquid nam.
-                </p>
+                <img className="h-full max-w-xxxs" src={me} alt="me" />
               </div>
               <ul className="flex flex-col gap-4">
                 {navLinksdata.map((item) => (
@@ -75,7 +73,7 @@ const Navbar = () => {
               </ul>
               <div className="flex flex-col gap-4">
                 <h2 className="text-base uppercase font-titleFont mb-4">
-                  Find me in
+                  Find me on
                 </h2>
                 <div className="flex gap-4">
                   <a href={links.linkedin} target="_blank" rel="noopener noreferrer">
