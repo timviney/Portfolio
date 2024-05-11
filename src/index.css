@@ -27,3 +27,10 @@
 .scrollbar-hide::-webkit-scrollbar{
     display: none;
 }
+
+@media (max-width: 670px) {
+    .name-break {
+      display: block; /* Forces the content to a new line */
+    }
+  }
+  
