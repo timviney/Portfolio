@@ -1,5 +1,5 @@
 import React from 'react'
-import { TbMathFunction, TbCSharp, TbCloudComputing } from "react-icons/tb";
+import { TbMathFunction, TbBrandCSharp, TbCloudComputing } from "react-icons/tb";
 import { SiAzuredevops, SiAzurefunctions } from "react-icons/si";
 import { HiOutlineLightBulb } from "react-icons/hi";
 import Title from '../layouts/Title';
@@ -22,7 +22,7 @@ const Skills = () => {
           title="C# Backend Development"
           des="5 years' experience building and maintaining key industrial models and applications,
            employed by investors, regulators, and the UK government."
-          icon={<TbCSharp />}
+          icon={<TbBrandCSharp />}
         />
         <Card
           title="Mathematical Modelling"
