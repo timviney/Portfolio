@@ -4,8 +4,8 @@ import Education from './Education';
 import Experience from "./Experience"
 
 const Cv = () => {
-   const [experienceData, setExperienceData] = useState(false);
-   const [educationData, setEducationData] = useState(true);
+   const [experienceData, setExperienceData] = useState(true);
+   const [educationData, setEducationData] = useState(false);
   return (
     <section id="cv" className="w-full py-20 border-b-[1px] border-b-black">
       <div className="flex justify-center items-center text-center">
