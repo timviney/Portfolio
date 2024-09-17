@@ -8,6 +8,7 @@ import FooterBottom from "./components/footer/FooterBottom";
 import Navbar from "./components/navbar/Navbar";
 import Projects from "./components/projects/Projects";
 import Cv from "./components/cv/Cv";
+import Sudoku from "./components/sudoku/sudoku";
 
 function App() {
   return (
@@ -27,8 +28,8 @@ function App() {
                 <FooterBottom />
               </>
             } />
-            <Route path="/test" element={
-              <Cv />
+            <Route path="/sudoku" element={
+              <Sudoku />
               } />
           </Routes>
         </div>
