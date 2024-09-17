@@ -27,7 +27,9 @@ function App() {
                 <FooterBottom />
               </>
             } />
-            <Route path="/test" element={<Cv />} />
+            <Route path="/test" element={
+              <Cv />
+              } />
           </Routes>
         </div>
       </div>

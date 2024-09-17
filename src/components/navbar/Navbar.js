@@ -1,20 +1,49 @@
-import React, { useState } from 'react'
-import { Link } from "react-scroll";
+import React, { useState, useEffect } from 'react';
+import { Link as ScrollLink, scroller } from 'react-scroll';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { FiMenu } from "react-icons/fi";
 import { MdClose } from "react-icons/md";
 import { FaLinkedinIn } from "react-icons/fa";
-import { logo, me } from "../../assets/index"
+import { logo, me } from "../../assets/index";
 import { navLinksdata } from '../../constants';
-import links from '../../config'
+import links from '../../config';
 
 const Navbar = () => {
-  const [showMenu, setShowMenu]=useState(false)
+  const [showMenu, setShowMenu] = useState(false);
+  const [pendingScroll, setPendingScroll] = useState(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (pendingScroll && location.pathname === '/') {
+      scrollToPage(pendingScroll)
+      setPendingScroll(null);
+    }
+  }, [location, pendingScroll]);
+
+  const handleNavigation = (section) => {
+    if (location.pathname !== "/") {
+      setPendingScroll(section);
+      navigate("/", { replace: true });
+    } else {
+      scrollToPage(section);
+    }
+  };
+
+  function scrollToPage(section) {
+    scroller.scrollTo(section, {
+      duration: 500,
+      smooth: true,
+      offset: -70,
+    });
+  }
+
   return (
     <div className="w-full h-24 sticky top-0 z-50 bg-bodyColor mx-auto flex justify-between items-center font-titleFont border-b-[1px] border-b-gray-600">
-      <div className="w-full h-24 sticky top-0 z-50 bg-bodyColor mx-auto flex justify-between items-center font-titleFont border-b-[1px] border-b-gray-600">
-        <Link to="home" spy={true} smooth={true} offset={-70} duration={500} className="inline-block h-full cursor-pointer">
-          <img src={logo} alt="logo" className="h-full max-w-xxs" />
-        </Link>
+      <div className="w-full h-24 flex justify-between items-center">
+        <ScrollLink to="home" spy={true} smooth={true} offset={-70} duration={500} className="inline-block h-full cursor-pointer">
+          <img src={logo} alt="logo" className="h-full max-w-xxs" onClick={() => handleNavigation("home")} />
+        </ScrollLink>
       </div>
       <div>
         <ul className="hidden mdl:inline-flex items-center gap-6 lg:gap-10">
@@ -23,16 +52,7 @@ const Navbar = () => {
               className="text-base font-normal text-gray-400 tracking-wide cursor-pointer hover:text-designColor duration-300"
               key={_id}
             >
-              <Link
-                activeClass="active"
-                to={link}
-                spy={true}
-                smooth={true}
-                offset={-70}
-                duration={500}
-              >
-                {title}
-              </Link>
+              <span onClick={() => handleNavigation(link)}>{title}</span>
             </li>
           ))}
         </ul>
@@ -57,17 +77,9 @@ const Navbar = () => {
                     key={item._id}
                     className="text-base font-normal text-gray-400 tracking-wide cursor-pointer hover:text-designColor duration-300"
                   >
-                    <Link
-                      onClick={() => setShowMenu(false)}
-                      activeClass="active"
-                      to={item.link}
-                      spy={true}
-                      smooth={true}
-                      offset={-70}
-                      duration={500}
-                    >
+                    <span onClick={() => { handleNavigation(item.link); setShowMenu(false); }}>
                       {item.title}
-                    </Link>
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -81,7 +93,7 @@ const Navbar = () => {
                       <FaLinkedinIn />
                     </span>
                   </a>
-              </div>
+                </div>
               </div>
               <span
                 onClick={() => setShowMenu(false)}
@@ -95,6 +107,6 @@ const Navbar = () => {
       </div>
     </div>
   );
-}
+};
 
-export default Navbar
+export default Navbar;
