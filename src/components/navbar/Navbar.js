@@ -24,7 +24,7 @@ const Navbar = () => {
   const handleNavigation = (section) => {
     if (location.pathname !== "/") {
       setPendingScroll(section);
-      navigate("/", { replace: true });
+      navigate("/");
     } else {
       scrollToPage(section);
     }
