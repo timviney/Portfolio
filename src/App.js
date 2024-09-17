@@ -1,4 +1,5 @@
 import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Banner from "./components/banner/Banner";
 import Contact from "./components/contact/Contact";
 import Skills from "./components/skills/Skills";
@@ -10,18 +11,27 @@ import Cv from "./components/cv/Cv";
 
 function App() {
   return (
-    <div className="w-full h-auto bg-bodyColor text-lightText px-4">
+    <Router>
+      <div className="w-full h-auto bg-bodyColor text-lightText px-4">
         <Navbar />
-      <div className="max-w-screen-xl mx-auto">
-        <Banner />
-        <Skills />
-        <Projects />
-        <Cv />
-        <Contact />
-        <Footer />
-        <FooterBottom />
+        <div className="max-w-screen-xl mx-auto">
+          <Routes>
+            <Route path="/" element={
+              <>
+                <Banner />
+                <Skills />
+                <Projects />
+                <Cv />
+                <Contact />
+                <Footer />
+                <FooterBottom />
+              </>
+            } />
+            <Route path="/test" element={<Cv />} />
+          </Routes>
+        </div>
       </div>
-    </div>
+    </Router>
   );
 }
 
