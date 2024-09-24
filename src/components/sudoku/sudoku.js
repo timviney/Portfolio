@@ -66,8 +66,8 @@ const SudokuSolver = () => {
       }
 
       const data = await response.json();
-      if (data && data.matrix) {
-        setGrid(data.matrix);
+      if (data && data.result.matrix) {
+        setGrid(data.result.matrix);
       }
     } catch (error) {
       console.error('Error solving Sudoku:', error);
