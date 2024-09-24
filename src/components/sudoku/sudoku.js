@@ -7,13 +7,11 @@ const SudokuSolver = () => {
     .map(() => Array(9).fill(0));
 
   // Initialize the Sudoku grid with empty values (0)
-  const [grid, setGrid] = useState(
-    emptyGrid
-  );
+  const [grid, setGrid] = useState(emptyGrid);
 
-  const [locked, setLock] = useState(
-    false
-  );
+  const [locked, setLock] = useState(false);
+
+  const [isLoading, setLoading] = useState(false);
 
   // Control keys refs
   const inputRefs = useRef(Array(9).fill(null).map(() => Array(9).fill(null)));
@@ -59,6 +57,7 @@ const SudokuSolver = () => {
 
   const solveSudoku = async () => {
     setLock(true);
+    setLoading(true);
     const post = {
       method: 'solveMatrix',
       matrix: grid,
@@ -86,44 +85,68 @@ const SudokuSolver = () => {
     } catch (error) {
       console.error('Error solving Sudoku:', error);
     }
+    setLoading(false);
   };
+
+  const loadingSpinner = 
+    <svg
+      className="animate-spin h-5 w-5 text-white"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+    <circle
+      className="opacity-25"
+      cx="12"
+      cy="12"
+      r="10"
+      stroke="currentColor"
+      strokeWidth="4"
+    ></circle>
+    <path
+      className="opacity-75"
+      fill="currentColor"
+      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+    ></path>
+    </svg>;
 
   return (
     <section className="w-full py-20 flex flex-col items-center">
       <h1 className="text-3xl font-bold mb-8">Sudoku Solver</h1>
       <div className="grid grid-cols-9 border-3 border-black">
-        {grid.map((row, rowIndex) =>
-          row.map((value, colIndex) => (
-            <input
-              key={`${rowIndex}-${colIndex}`}
-              type="text"
-              value={value === 0 ? '' : value}
-              ref={(el) => (inputRefs.current[rowIndex][colIndex] = el)}
-              onChange={(e) => handleChange(rowIndex, colIndex, e.target.value)}
-              onKeyDown={(e) => handleKeyDown(e, rowIndex, colIndex)}
-              className={`w-10 h-10 text-center border border-gray-300 text-black font-bold text-xl focus:outline-none
-                ${rowIndex % 3 === 0 ? 'border-t-1.5 border-t-black' : ''} 
-                ${colIndex % 3 === 0 ? 'border-l-1.5 border-l-black' : ''} 
-                ${rowIndex % 3 === 2 ? 'border-b-1.5 border-b-black' : ''} 
-                ${colIndex % 3 === 2 ? 'border-r-1.5 border-r-black' : ''} 
-              `}
-              maxLength="1"
-            />
-          ))
-        )}
+      {grid.map((row, rowIndex) =>
+        row.map((value, colIndex) => (
+          <input
+            key={`${rowIndex}-${colIndex}`}
+            type="text"
+            value={value === 0 ? '' : value}
+            ref={(el) => (inputRefs.current[rowIndex][colIndex] = el)}
+            onChange={(e) => handleChange(rowIndex, colIndex, e.target.value)}
+            onKeyDown={(e) => handleKeyDown(e, rowIndex, colIndex)}
+            className={`w-10 h-10 text-center border border-gray-300 text-black font-bold text-xl focus:outline-none
+              ${rowIndex % 3 === 0 ? 'border-t-1.5 border-t-black' : ''} 
+              ${colIndex % 3 === 0 ? 'border-l-1.5 border-l-black' : ''} 
+              ${rowIndex % 3 === 2 ? 'border-b-1.5 border-b-black' : ''} 
+              ${colIndex % 3 === 2 ? 'border-r-1.5 border-r-black' : ''} 
+            `}
+            maxLength="1"
+          />
+        )))}
       </div>
       <div className="flex space-x-4"> 
         <button
           onClick={clear}
-          className="mt-8 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="mt-8 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-24"
+          disabled = {isLoading}
         >
           Clear
         </button>
         <button
           onClick={solveSudoku}
-          className="mt-8 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className={`mt-8 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-24 flex items-center justify-center`}
+          disabled={isLoading}
         >
-          Solve
+          {isLoading ? (loadingSpinner) : ('Solve')}
         </button>
       </div>
     </section>
