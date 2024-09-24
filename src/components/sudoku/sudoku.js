@@ -77,7 +77,7 @@ const SudokuSolver = () => {
   return (
     <section className="w-full py-20 flex flex-col items-center">
       <h1 className="text-3xl font-bold mb-8">Sudoku Solver</h1>
-      <div className="grid grid-cols-9 gap-[1px] border-3 border-black">
+      <div className="grid grid-cols-9 border-3 border-black">
         {grid.map((row, rowIndex) =>
           row.map((value, colIndex) => (
             <input
@@ -88,10 +88,10 @@ const SudokuSolver = () => {
               onChange={(e) => handleChange(rowIndex, colIndex, e.target.value)}
               onKeyDown={(e) => handleKeyDown(e, rowIndex, colIndex)}
               className={`w-10 h-10 text-center border border-gray-300 text-black font-bold text-xl focus:outline-none
-                ${rowIndex % 3 === 0 && rowIndex !== 0 ? 'border-t-1.5 border-t-black' : ''} 
-                ${colIndex % 3 === 0 && colIndex !== 0 ? 'border-l-1.5 border-l-black' : ''} 
-                ${rowIndex % 3 === 2 && rowIndex !== 8 ? 'border-b-1.5 border-b-black' : ''} 
-                ${colIndex % 3 === 2 && colIndex !== 8 ? 'border-r-1.5 border-r-black' : ''} 
+                ${rowIndex % 3 === 0 ? 'border-t-1.5 border-t-black' : ''} 
+                ${colIndex % 3 === 0 ? 'border-l-1.5 border-l-black' : ''} 
+                ${rowIndex % 3 === 2 ? 'border-b-1.5 border-b-black' : ''} 
+                ${colIndex % 3 === 2 ? 'border-r-1.5 border-r-black' : ''} 
               `}
               maxLength="1"
             />
