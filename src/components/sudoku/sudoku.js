@@ -1,18 +1,25 @@
 import React, { useState, useRef } from 'react';
 
 const SudokuSolver = () => {
+
+  const emptyGrid = Array(9)
+    .fill(0)
+    .map(() => Array(9).fill(0));
+
   // Initialize the Sudoku grid with empty values (0)
   const [grid, setGrid] = useState(
-    Array(9)
-      .fill(0)
-      .map(() => Array(9).fill(0))
+    emptyGrid
+  );
+
+  const [locked, setLock] = useState(
+    false
   );
 
   // Control keys refs
   const inputRefs = useRef(Array(9).fill(null).map(() => Array(9).fill(null)));
 
   const handleChange = (row, col, value) => {
-    if (value === '' || (/^[1-9]$/.test(value) && value.length === 1)) {
+    if (!locked && (value === '' || (/^[1-9]$/.test(value) && value.length === 1))) {
       const newGrid = [...grid];
       newGrid[row][col] = value === '' ? 0 : parseInt(value);
       setGrid(newGrid);
@@ -45,7 +52,13 @@ const SudokuSolver = () => {
     }
   };
 
+  const clear = () => {
+    setGrid(emptyGrid);
+    setLock(false);
+  }
+
   const solveSudoku = async () => {
+    setLock(true);
     const post = {
       method: 'solveMatrix',
       matrix: grid,
@@ -69,6 +82,7 @@ const SudokuSolver = () => {
       if (data && data.result.matrix) {
         setGrid(data.result.matrix);
       }
+      else throw data.error;
     } catch (error) {
       console.error('Error solving Sudoku:', error);
     }
@@ -98,12 +112,20 @@ const SudokuSolver = () => {
           ))
         )}
       </div>
-      <button
-        onClick={solveSudoku}
-        className="mt-8 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-      >
-        Solve
-      </button>
+      <div className="flex space-x-4"> 
+        <button
+          onClick={clear}
+          className="mt-8 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Clear
+        </button>
+        <button
+          onClick={solveSudoku}
+          className="mt-8 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Solve
+        </button>
+      </div>
     </section>
   );
 };
