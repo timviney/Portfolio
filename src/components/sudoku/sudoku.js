@@ -14,6 +14,7 @@ const SudokuSolver = () => {
   const [locked, setLock] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [solvedCells, setSolvedCells] = useState(noSolvedCells)
+  const [error, setError] = useState('');
 
   // Control keys refs
   const inputRefs = useRef(Array(9).fill(null).map(() => Array(9).fill(null)));
@@ -59,19 +60,19 @@ const SudokuSolver = () => {
   }
 
   const solveSudoku = async () => {
-    setLock(true);
-    setLoading(true);
-    const post = {
-      method: 'solveMatrix',
-      matrix: grid,
-    };
-    var cellsToSolve = Array(9).fill(0).map(() => Array(9).fill(false));
-    grid.forEach((row, i) => {
-      row.forEach((value, j) => {
-        cellsToSolve[i][j] = value === 0;
-      });
-    });
     try {
+      setLock(true);
+      setLoading(true);
+      const post = {
+        method: 'solveMatrix',
+        matrix: grid,
+      };
+      var cellsToSolve = Array(9).fill(0).map(() => Array(9).fill(false));
+      grid.forEach((row, i) => {
+        row.forEach((value, j) => {
+          cellsToSolve[i][j] = value === 0;
+        });
+      });
       const response = await fetch('https://jt3ypgjdsh.execute-api.eu-north-1.amazonaws.com/prod/sudoku', {
         method: 'POST',
         headers: {
@@ -86,13 +87,17 @@ const SudokuSolver = () => {
       }
 
       const data = await response.json();
-      if (data && data.result.matrix) {
+      if (data && data.result && !data.error) {
         setGrid(data.result.matrix);
         setSolvedCells(cellsToSolve);
       }
-      else throw data.error;
+      else{
+        console.error('Error returned from solver:', data.error)
+        setError(data.error)
+      }
     } catch (error) {
-      console.error('Error solving Sudoku:', error);
+      console.error('Error solving Sudoku:', error.message);
+      setError(error.message)
     }
     setLoading(false);
   };
@@ -119,9 +124,23 @@ const SudokuSolver = () => {
     ></path>
     </svg>;
 
+  const errorBox = <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 w-1/2">
+    <span className="block sm:inline">{error}</span>
+    <button
+      onClick={() => setError('')} // Close button clears the error
+      className="absolute top-0 bottom-0 right-0 px-4 py-3"
+    >
+      <svg className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+        <title>Close</title>
+        <path d="M14.348 5.652a1 1 0 00-1.414 0L10 8.586 7.066 5.652a1 1 0 10-1.414 1.414L8.586 10l-2.934 2.934a1 1 0 101.414 1.414L10 11.414l2.934 2.934a1 1 0 001.414-1.414L11.414 10l2.934-2.934a1 1 0 000-1.414z" />
+      </svg>
+    </button>
+  </div>;
+
   return (
     <section className="w-full py-20 flex flex-col items-center">
       <h1 className="text-3xl font-bold mb-8">Sudoku Solver</h1>
+      {error && (errorBox)}
       <div className="grid grid-cols-9 border-3 border-black">
       {grid.map((row, rowIndex) =>
         row.map((value, colIndex) => (
