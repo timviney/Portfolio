@@ -6,12 +6,14 @@ const SudokuSolver = () => {
     .fill(0)
     .map(() => Array(9).fill(0));
 
-  // Initialize the Sudoku grid with empty values (0)
+  const noSolvedCells = Array(9)
+    .fill(0)
+    .map(() => Array(9).fill(false));
+
   const [grid, setGrid] = useState(emptyGrid);
-
   const [locked, setLock] = useState(false);
-
   const [isLoading, setLoading] = useState(false);
+  const [solvedCells, setSolvedCells] = useState(noSolvedCells)
 
   // Control keys refs
   const inputRefs = useRef(Array(9).fill(null).map(() => Array(9).fill(null)));
@@ -53,6 +55,7 @@ const SudokuSolver = () => {
   const clear = () => {
     setGrid(emptyGrid);
     setLock(false);
+    setSolvedCells(noSolvedCells);
   }
 
   const solveSudoku = async () => {
@@ -62,7 +65,12 @@ const SudokuSolver = () => {
       method: 'solveMatrix',
       matrix: grid,
     };
-
+    var cellsToSolve = Array(9).fill(0).map(() => Array(9).fill(false));
+    grid.forEach((row, i) => {
+      row.forEach((value, j) => {
+        cellsToSolve[i][j] = value === 0;
+      });
+    });
     try {
       const response = await fetch('https://jt3ypgjdsh.execute-api.eu-north-1.amazonaws.com/prod/sudoku', {
         method: 'POST',
@@ -80,6 +88,7 @@ const SudokuSolver = () => {
       const data = await response.json();
       if (data && data.result.matrix) {
         setGrid(data.result.matrix);
+        setSolvedCells(cellsToSolve);
       }
       else throw data.error;
     } catch (error) {
@@ -123,11 +132,12 @@ const SudokuSolver = () => {
             ref={(el) => (inputRefs.current[rowIndex][colIndex] = el)}
             onChange={(e) => handleChange(rowIndex, colIndex, e.target.value)}
             onKeyDown={(e) => handleKeyDown(e, rowIndex, colIndex)}
-            className={`w-10 h-10 text-center border border-gray-300 text-black font-bold text-xl focus:outline-none
+            className={`w-10 h-10 text-center border border-gray-300 font-bold text-xl focus:outline-none
               ${rowIndex % 3 === 0 ? 'border-t-1.5 border-t-black' : ''} 
               ${colIndex % 3 === 0 ? 'border-l-1.5 border-l-black' : ''} 
               ${rowIndex % 3 === 2 ? 'border-b-1.5 border-b-black' : ''} 
-              ${colIndex % 3 === 2 ? 'border-r-1.5 border-r-black' : ''} 
+              ${colIndex % 3 === 2 ? 'border-r-1.5 border-r-black' : ''}
+              ${solvedCells[rowIndex][colIndex] ? 'text-blue-500' : 'text-black'} 
             `}
             maxLength="1"
           />
