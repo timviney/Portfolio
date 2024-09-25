@@ -91,37 +91,39 @@ const SudokuSolver = () => {
         setGrid(data.result.matrix);
         setSolvedCells(cellsToSolve);
       }
-      else{
-        console.error('Error returned from solver:', data.error)
-        setError(data.error)
+      else {
+        console.error('Error returned from solver:', data.error.message);
+        setError(data.error.message);
+        setLock(false);
       }
     } catch (error) {
       console.error('Error solving Sudoku:', error.message);
-      setError(error.message)
+      setError(error.message);
+      setLock(false);
     }
     setLoading(false);
   };
 
-  const loadingSpinner = 
+  const loadingSpinner =
     <svg
       className="animate-spin h-5 w-5 text-white"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
     >
-    <circle
-      className="opacity-25"
-      cx="12"
-      cy="12"
-      r="10"
-      stroke="currentColor"
-      strokeWidth="4"
-    ></circle>
-    <path
-      className="opacity-75"
-      fill="currentColor"
-      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-    ></path>
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+      ></circle>
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+      ></path>
     </svg>;
 
   const errorBox = <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 w-1/2">
@@ -142,31 +144,31 @@ const SudokuSolver = () => {
       <h1 className="text-3xl font-bold mb-8">Sudoku Solver</h1>
       {error && (errorBox)}
       <div className="grid grid-cols-9 border-3 border-black">
-      {grid.map((row, rowIndex) =>
-        row.map((value, colIndex) => (
-          <input
-            key={`${rowIndex}-${colIndex}`}
-            type="text"
-            value={value === 0 ? '' : value}
-            ref={(el) => (inputRefs.current[rowIndex][colIndex] = el)}
-            onChange={(e) => handleChange(rowIndex, colIndex, e.target.value)}
-            onKeyDown={(e) => handleKeyDown(e, rowIndex, colIndex)}
-            className={`w-10 h-10 text-center border border-gray-300 font-bold text-xl focus:outline-none
+        {grid.map((row, rowIndex) =>
+          row.map((value, colIndex) => (
+            <input
+              key={`${rowIndex}-${colIndex}`}
+              type="text"
+              value={value === 0 ? '' : value}
+              ref={(el) => (inputRefs.current[rowIndex][colIndex] = el)}
+              onChange={(e) => handleChange(rowIndex, colIndex, e.target.value)}
+              onKeyDown={(e) => handleKeyDown(e, rowIndex, colIndex)}
+              className={`w-10 h-10 text-center border border-gray-300 font-bold text-xl focus:outline-none
               ${rowIndex % 3 === 0 ? 'border-t-1.5 border-t-black' : ''} 
               ${colIndex % 3 === 0 ? 'border-l-1.5 border-l-black' : ''} 
               ${rowIndex % 3 === 2 ? 'border-b-1.5 border-b-black' : ''} 
               ${colIndex % 3 === 2 ? 'border-r-1.5 border-r-black' : ''}
               ${solvedCells[rowIndex][colIndex] ? 'text-blue-500' : 'text-black'} 
             `}
-            maxLength="1"
-          />
-        )))}
+              maxLength="1"
+            />
+          )))}
       </div>
-      <div className="flex space-x-4"> 
+      <div className="flex space-x-4">
         <button
           onClick={clear}
           className="mt-8 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-24"
-          disabled = {isLoading}
+          disabled={isLoading}
         >
           Clear
         </button>
