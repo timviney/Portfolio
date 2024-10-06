@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
-import RandomGrid from './sudokuDb';
-import { solveMatrix } from '../../api/api';
+import { solveMatrix, randomSudoku } from '../../api/api';
 
 const SudokuSolver = () => {
 
@@ -61,11 +60,19 @@ const SudokuSolver = () => {
     setSolvedCells(noSolvedCells);
   }
 
-  const randomGrid = () => {
-    var randGrid = RandomGrid();
-    setGrid(randGrid);
+  const randomGrid = async () => {
+    setLock(true);
+    const data = await randomSudoku();
+    console.log(data)
+    if (data && data.result && !data.error) {
+      setGrid(data.result.grid);
+      setSolvedCells(noSolvedCells);
+    }
+    else {
+      console.error('Error returned from database:', data.error.message);
+      setError(data.error.message);
+    }
     setLock(false);
-    setSolvedCells(noSolvedCells);
   }
 
   const solveSudoku = async () => {
@@ -80,14 +87,8 @@ const SudokuSolver = () => {
         });
       });
 
-      const response = await solveMatrix(grid);
+      const data = await solveMatrix(grid);
 
-      if (!response.ok) {
-        const message = `An error has occurred: ${response.statusText}`;
-        throw new Error(message);
-      }
-
-      const data = await response.json();
       if (data && data.result && !data.error) {
         setGrid(data.result.matrix);
         setSolvedCells(cellsToSolve);
@@ -184,7 +185,7 @@ const SudokuSolver = () => {
           onClick={solveSudoku}
           className={`mt-8 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-24 flex items-center justify-center`}
           disabled={isLoading || locked}
-          title = "AWS is expensive - sometimes the first call is slow :)"
+          title="AWS is expensive - sometimes the first call is slow :)"
         >
           {isLoading ? (loadingSpinner) : ('Solve')}
         </button>
