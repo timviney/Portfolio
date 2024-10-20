@@ -25,10 +25,10 @@ export const solveMatrix = async (grid) => {
 
 export const randomSudoku = async () => {
     const post = {
-        Table: 1,
-        Method: "Random",
-        RequestParameters: {
-            Difficulty: 1
+        table: "SudokuProblems",
+        method: "random",
+        requestParameters: {
+            difficulty: "medium"
         }
     };
     const response = await fetch(dataAccessApi, {
