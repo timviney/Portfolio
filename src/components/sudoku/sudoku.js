@@ -13,7 +13,8 @@ const SudokuSolver = () => {
 
   const [grid, setGrid] = useState(emptyGrid);
   const [locked, setLock] = useState(false);
-  const [isLoading, setLoading] = useState(false);
+  const [solveIsLoading, setSolveIsLoading] = useState(false);
+  const [randomIsLoading, setRandomIsLoading] = useState(false);
   const [solvedCells, setSolvedCells] = useState(noSolvedCells)
   const [error, setError] = useState('');
 
@@ -62,6 +63,7 @@ const SudokuSolver = () => {
 
   const randomGrid = async () => {
     setLock(true);
+    setRandomIsLoading(true);
     const data = await randomSudoku();
     console.log(data)
     if (data && data.result && !data.error) {
@@ -72,13 +74,14 @@ const SudokuSolver = () => {
       console.error('Error returned from database:', data.error.message);
       setError(data.error.message);
     }
+    setRandomIsLoading(false);
     setLock(false);
   }
 
   const solveSudoku = async () => {
     try {
       setLock(true);
-      setLoading(true);
+      setSolveIsLoading(true);
 
       var cellsToSolve = Array(9).fill(0).map(() => Array(9).fill(false));
       grid.forEach((row, i) => {
@@ -103,7 +106,7 @@ const SudokuSolver = () => {
       setError(error.message);
       setLock(false);
     }
-    setLoading(false);
+    setSolveIsLoading(false);
   };
 
   const loadingSpinner =
@@ -170,25 +173,25 @@ const SudokuSolver = () => {
         <button
           onClick={randomGrid}
           className="mt-8 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-24 flex items-center justify-center"
-          disabled={isLoading}
+          disabled={randomIsLoading || solveIsLoading}
           title="AWS is expensive - sometimes the first call is slow :)"
         >
-          Random
+          {randomIsLoading ? (loadingSpinner) : ('Random')}
         </button>
         <button
           onClick={clear}
           className="mt-8 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-24 flex items-center justify-center"
-          disabled={isLoading}
+          disabled={randomIsLoading || solveIsLoading}
         >
           Clear
         </button>
         <button
           onClick={solveSudoku}
           className={`mt-8 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-24 flex items-center justify-center`}
-          disabled={isLoading || locked}
+          disabled={locked}
           title="AWS is expensive - sometimes the first call is slow :)"
         >
-          {isLoading ? (loadingSpinner) : ('Solve')}
+          {solveIsLoading ? (loadingSpinner) : ('Solve')}
         </button>
       </div>
     </section>
