@@ -55,12 +55,12 @@ const TanksGame = () => {
             if (!canvas) return;
 
             const buildUrl = "/tanks/Build";
-            const loaderUrl = buildUrl + "/Downloads.loader.js";
+            const loaderUrl = buildUrl + "/tanks.loader.js";
 
             const config = {
-                dataUrl: buildUrl + "/Downloads.data.gz",
-                frameworkUrl: buildUrl + "/Downloads.framework.js.gz",
-                codeUrl: buildUrl + "/Downloads.wasm.gz",
+                dataUrl: buildUrl + "/tanks.data.gz",
+                frameworkUrl: buildUrl + "/tanks.framework.js.gz",
+                codeUrl: buildUrl + "/tanks.wasm.gz",
                 streamingAssetsUrl: "StreamingAssets",
                 companyName: "DefaultCompany",
                 productName: "Tanks",
@@ -135,7 +135,7 @@ const TanksGame = () => {
                 <div id="unity-footer" className={`${isLoading ? 'hidden' : ''}`}>
                     <div id="unity-logo-title-footer"></div>
                     <div id="unity-fullscreen-button" className="cursor-pointer"></div>
-                    <div id="unity-build-title">Tanks</div>
+                    <div id="unity-build-title">Tanks game made with Unity and C#. Please play on fullscreen :)</div>
                 </div>
             </div>
 
