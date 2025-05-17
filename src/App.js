@@ -9,6 +9,7 @@ import Navbar from "./components/navbar/Navbar";
 import Projects from "./components/projects/Projects";
 import Cv from "./components/cv/Cv";
 import Sudoku from "./components/sudoku/sudoku";
+import Tanks from "./components/tanks/tanks-game";
 
 function App() {
   return (
@@ -30,6 +31,9 @@ function App() {
             } />
             <Route path="/sudoku" element={
               <Sudoku />
+              } />
+            <Route path="/tanks" element={
+              <Tanks />
               } />
           </Routes>
         </div>
