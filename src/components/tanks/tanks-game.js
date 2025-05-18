@@ -122,7 +122,7 @@ const TanksGame = () => {
             {errorBox}
 
             <div id="unity-container" className="unity-desktop relative">
-                <canvas id="unity-canvas" width="960" height="600" tabIndex="-1"></canvas>
+                <canvas id="unity-canvas" width="960" height="540" tabIndex="-1"></canvas>
                 {isLoading && (
                     <div id="unity-loading-bar" className="block">
                         <div id="unity-logo"></div>
