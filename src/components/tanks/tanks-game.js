@@ -135,7 +135,7 @@ const TanksGame = () => {
                 <div id="unity-footer" className={`${isLoading ? 'hidden' : ''}`}>
                     <div id="unity-logo-title-footer"></div>
                     <div id="unity-fullscreen-button" className="cursor-pointer"></div>
-                    <div id="unity-build-title">Tanks game made with Unity and C#. Please play on fullscreen :)</div>
+                    <div id="unity-build-title">Tanks game made with Unity and C#</div>
                 </div>
             </div>
 
