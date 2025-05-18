@@ -122,6 +122,18 @@ const TanksGame = () => {
 
         initUnity();
     }, []);
+    const handleFullscreen = () => {
+        const canvas = document.getElementById('unity-canvas');
+        if (canvas?.requestFullscreen) {
+          canvas.requestFullscreen();
+        } else if (canvas?.webkitRequestFullScreen) {
+          canvas.webkitRequestFullScreen(); // Safari
+        } else if (canvas?.mozRequestFullScreen) {
+          canvas.mozRequestFullScreen(); // Firefox
+        } else if (canvas?.msRequestFullscreen) {
+          canvas.msRequestFullscreen(); // IE/Edge
+        }
+      };
 
     return (
         <section className="w-full py-20 flex flex-col items-center">
@@ -148,8 +160,7 @@ const TanksGame = () => {
 
             <div className="flex space-x-4 mt-8">
                 <button
-                    onClick={() => unityInstanceRef.current?.SetFullscreen(1)
-                    }
+                    onClick={handleFullscreen}
                     className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-32 flex items-center justify-center"
                     disabled={isLoading}
                 >
