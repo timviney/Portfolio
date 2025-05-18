@@ -64,7 +64,12 @@ const TanksGame = () => {
                 streamingAssetsUrl: "StreamingAssets",
                 companyName: "DefaultCompany",
                 productName: "Tanks",
-                productVersion: "1.0"
+                productVersion: "1.0",
+                webglContextAttributes: {
+                    preferLowPowerToHighPerformance: true,
+                    antialias: false
+                  },
+                  devicePixelRatio: 1 // Prevent HiDPI rendering
             };
 
             const script = document.createElement("script");
@@ -74,11 +79,13 @@ const TanksGame = () => {
                 if (!isMountedRef.current) return;
 
                 createUnityInstance(canvas, config, (progress) => {
-                    if (!isMountedRef.current) return;
-                    const progressBar = document.querySelector("#unity-progress-bar-full");
-                    if (progressBar) {
-                        progressBar.style.width = 100 * progress + "%";
-                    }
+                    console.log(`Loading progress: ${progress}`);
+                  }).then((instance) => {
+                    console.log("Unity initialized successfully");
+                    // Add test rendering
+                    instance.SendMessage('YourGameObject', 'YourTestFunction');
+                  }).catch((error) => {
+                    console.error("Unity init failed:", error);
                 }).then((instance) => {
                     if (!isMountedRef.current) return;
                     unityInstanceRef.current = instance;
@@ -101,15 +108,15 @@ const TanksGame = () => {
             document.body.appendChild(script);
 
             return () => {
-                // Cleanup on unmount
                 isMountedRef.current = false;
-                if (script.parentNode) {
-                    document.body.removeChild(script);
-                }
                 if (unityInstanceRef.current) {
-                    unityInstanceRef.current.Quit();
-                    unityInstanceRef.current = null;
+                    unityInstanceRef.current.Quit().then(() => {
+                        unityInstanceRef.current = null;
+                    });
                 }
+                // Cleanup canvas
+                const canvas = document.querySelector("#unity-canvas");
+                if (canvas) canvas.remove();
             };
         };
 
@@ -122,7 +129,7 @@ const TanksGame = () => {
             {errorBox}
 
             <div id="unity-container" className="unity-desktop relative">
-                <canvas id="unity-canvas" width="960" height="540" tabIndex="-1"></canvas>
+                <canvas id="unity-canvas" width="960" height="540" aspect-ratio="16/9" tabIndex="-1"></canvas>
                 {isLoading && (
                     <div id="unity-loading-bar" className="block">
                         <div id="unity-logo"></div>
