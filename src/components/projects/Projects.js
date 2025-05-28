@@ -1,6 +1,6 @@
 import React from 'react'
 import Title from '../layouts/Title'
-import { projectSudoku, projectDataAccess } from "../../assets/index";
+import { projectSudoku, projectDataAccess, projectTanks } from "../../assets/index";
 import ProjectsCard from './ProjectsCard';
 
 const Projects = () => {
@@ -16,6 +16,13 @@ const Projects = () => {
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 xl:gap-14">
+        <ProjectsCard
+          title="Tanks Game"
+          des="Tanks Game made with Unity/C#. Uses custom bullet physics, game management and logic for increasing AI difficulty."
+          src={projectTanks}
+          sitePage={"tanks"}
+          githubRepo={"https://github.com/timviney/Tanks"}
+        />
         <ProjectsCard
           title="Sudoku Solver"
           des="Solving sudoku problems via linear optimisation. Fill your own or a select a random one from the database."
