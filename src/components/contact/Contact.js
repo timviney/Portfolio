@@ -1,4 +1,5 @@
-import React,{useState} from 'react'
+import React, { useState } from 'react';
+import emailjs from '@emailjs/browser';
 import Title from '../layouts/Title';
 import ContactLeft from './ContactLeft';
 
@@ -10,44 +11,92 @@ const Contact = () => {
   const [message, setMessage] = useState("");
   const [errMsg, setErrMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   // ========== Email Validation start here ==============
   const emailValidation = () => {
     return String(email)
-      .toLocaleLowerCase()
+      .toLowerCase()
       .match(/^\w+([-]?\w+)*@\w+([-]?\w+)*(\.\w{2,3})+$/);
   };
-  // ========== Email Validation end here ================
+  
+  // ========== Phone Validation start here ==============
+  const phoneValidation = () => {
+    // Basic phone validation - allows various formats
+    return String(phoneNumber)
+      .replace(/\s/g, '') // Remove spaces
+      .match(/^[+]?[0-9][\d]{0,15}$/); // Basic international format
+  };
+  // ========== Validation end here ================
 
-  const handleSend = (e) => {
+  const handleSend = async (e) => {
     e.preventDefault();
+    
+    // Clear previous messages
+    setErrMsg("");
+    setSuccessMsg("");
+    
+    // Validation
     if (username === "") {
       setErrMsg("Name is required!");
-    } else if (phoneNumber === "") {
-      setErrMsg("Phone number is required!");
+      return;
     } else if (email === "") {
       setErrMsg("Please give your Email!");
-    } else if (!emailValidation(email)) {
+      return;
+    } else if (!emailValidation()) {
       setErrMsg("Please give a valid Email!");
+      return;
+    } else if (phoneNumber !== "" && !phoneValidation()) {
+      setErrMsg("Please provide a valid phone number!");
+      return;
     } else if (subject === "") {
       setErrMsg("Please provide a Subject!");
+      return;
     } else if (message === "") {
       setErrMsg("Message is required!");
-    } else {
-      setSuccessMsg(
-        `Thank you ${username}, your message has been sent successfully!`
-      );
+      return;
+    }
 
-      // TODO - can actually send the email here!
+    // Start loading
+    setIsLoading(true);
 
-      setErrMsg("");
-      setUsername("");
-      setPhoneNumber("");
-      setEmail("");
-      setSubject("");
-      setMessage("");
+    try {
+      // EmailJS configuration
+      const serviceId = 'service_phz70zy';
+      const templateId = 'template_v9z7i2a';
+      const publicKey = 'TNUeWI9fw864rC7I-';
+
+      const templateParams = {
+        from_name: username,
+        from_email: email,
+        phone_number: phoneNumber || 'Not provided',
+        subject: subject,
+        message: message,
+        to_name: 'Tim Viney',
+      };
+
+      const result = await emailjs.send(serviceId, templateId, templateParams, publicKey);
+      
+      if (result.status === 200) {
+        setSuccessMsg(
+          `Thank you ${username}, your message has been sent successfully!`
+        );
+
+        // Clear form after successful submission
+        setUsername("");
+        setPhoneNumber("");
+        setEmail("");
+        setSubject("");
+        setMessage("");
+      }
+    } catch (error) {
+      console.error('Email sending failed:', error);
+      setErrMsg("Failed to send message. Please try again later.");
+    } finally {
+      setIsLoading(false);
     }
   };
+
   return (
     <section
       id="contact"
@@ -80,24 +129,26 @@ const Contact = () => {
                     onChange={(e) => setUsername(e.target.value)}
                     value={username}
                     className={`${
-                      errMsg === "Username is required!" &&
+                      errMsg === "Name is required!" &&
                       "outline-designColor"
                     } contactInput`}
                     type="text"
+                    placeholder="Enter your name"
                   />
                 </div>
                 <div className="w-full lgl:w-1/2 flex flex-col gap-4">
                   <p className="text-sm text-gray-400 uppercase tracking-wide">
-                    Phone Number
+                    Phone Number <span className="text-xs normal-case">(optional)</span>
                   </p>
                   <input
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     value={phoneNumber}
                     className={`${
-                      errMsg === "Phone number is required!" &&
+                      errMsg === "Please provide a valid phone number!" &&
                       "outline-designColor"
                     } contactInput`}
-                    type="text"
+                    type="tel"
+                    placeholder="Enter your phone number"
                   />
                 </div>
               </div>
@@ -109,10 +160,11 @@ const Contact = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   value={email}
                   className={`${
-                    errMsg === "Please give your Email!" &&
+                    (errMsg === "Please give your Email!" || errMsg === "Please give a valid Email!") &&
                     "outline-designColor"
                   } contactInput`}
                   type="email"
+                  placeholder="Enter your email"
                 />
               </div>
               <div className="flex flex-col gap-4">
@@ -123,10 +175,11 @@ const Contact = () => {
                   onChange={(e) => setSubject(e.target.value)}
                   value={subject}
                   className={`${
-                    errMsg === "Plese give your Subject!" &&
+                    errMsg === "Please provide a Subject!" &&
                     "outline-designColor"
                   } contactInput`}
                   type="text"
+                  placeholder="Enter the subject"
                 />
               </div>
               <div className="flex flex-col gap-4">
@@ -141,14 +194,18 @@ const Contact = () => {
                   } contactTextArea`}
                   cols="30"
                   rows="8"
+                  placeholder="Enter your message"
                 ></textarea>
               </div>
               <div className="w-full">
                 <button
                   onClick={handleSend}
-                  className="w-full h-12 bg-[#141518] rounded-lg text-base text-gray-400 tracking-wider uppercase hover:text-white duration-300 hover:border-[1px] hover:border-designColor border-transparent"
+                  disabled={isLoading}
+                  className={`w-full h-12 bg-[#141518] rounded-lg text-base text-gray-400 tracking-wider uppercase hover:text-white duration-300 hover:border-[1px] hover:border-designColor border-transparent ${
+                    isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
                 >
-                  Send Message
+                  {isLoading ? 'Sending...' : 'Send Message'}
                 </button>
               </div>
               {errMsg && (
@@ -167,6 +224,6 @@ const Contact = () => {
       </div>
     </section>
   );
-}
+};
 
-export default Contact
+export default Contact;
