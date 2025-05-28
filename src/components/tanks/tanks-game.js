@@ -68,8 +68,8 @@ const TanksGame = () => {
                 webglContextAttributes: {
                     preferLowPowerToHighPerformance: true,
                     antialias: false
-                  },
-                  devicePixelRatio: 1 // Prevent HiDPI rendering
+                },
+                devicePixelRatio: 1 // Prevent HiDPI rendering
             };
 
             const script = document.createElement("script");
@@ -80,11 +80,11 @@ const TanksGame = () => {
 
                 createUnityInstance(canvas, config, (progress) => {
                     console.log(`Loading progress: ${progress}`);
-                  }).then((instance) => {
+                }).then((instance) => {
                     console.log("Unity initialized successfully");
                     // Add test rendering
                     instance.SendMessage('YourGameObject', 'YourTestFunction');
-                  }).catch((error) => {
+                }).catch((error) => {
                     console.error("Unity init failed:", error);
                 }).then((instance) => {
                     if (!isMountedRef.current) return;
@@ -125,22 +125,28 @@ const TanksGame = () => {
     const handleFullscreen = () => {
         const canvas = document.getElementById('unity-canvas');
         if (canvas?.requestFullscreen) {
-          canvas.requestFullscreen();
+            canvas.requestFullscreen();
         } else if (canvas?.webkitRequestFullScreen) {
-          canvas.webkitRequestFullScreen(); // Safari
+            canvas.webkitRequestFullScreen(); // Safari
         } else if (canvas?.mozRequestFullScreen) {
-          canvas.mozRequestFullScreen(); // Firefox
+            canvas.mozRequestFullScreen(); // Firefox
         } else if (canvas?.msRequestFullscreen) {
-          canvas.msRequestFullscreen(); // IE/Edge
+            canvas.msRequestFullscreen(); // IE/Edge
         }
-      };
+    };
 
     return (
-        <section className="w-full py-20 flex flex-col items-center">
+        <section className="w-full min-h-screen py-20 flex flex-col items-center justify-center">
             <h1 className="text-3xl font-bold mb-8">Tanks Game</h1>
             {errorBox}
 
-            <div id="unity-container" className="unity-desktop relative">
+            {isLoading && (
+                    <div className="mt-4 flex items-center">
+                        {loadingSpinner}
+                        <span className="ml-2">Loading game...</span>
+                    </div>
+                )}
+            <div id="unity-container" className="unity-desktop relative flex flex-col items-center">
                 <canvas id="unity-canvas" width="960" height="540" aspect-ratio="16/9" tabIndex="-1"></canvas>
                 {isLoading && (
                     <div id="unity-loading-bar" className="block">
@@ -151,33 +157,38 @@ const TanksGame = () => {
                     </div>
                 )}
                 <div id="unity-warning"></div>
+
+                <div className="flex space-x-4 mt-8">
+                    <button
+                        onClick={handleFullscreen}
+                        className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-32 flex items-center justify-center"
+                        disabled={isLoading}
+                    >
+                        Fullscreen
+                    </button>
+                </div>
                 <div id="unity-footer" className={`${isLoading ? 'hidden' : ''}`}>
                     <div id="unity-logo-title-footer"></div>
                     <div id="unity-fullscreen-button" className="cursor-pointer"></div>
-                    <div id="unity-build-title">
-                        Tanks game made with Unity and C#.<br />
-                        8 levels of increasing difficulty with enemy AI growing more sophisticated.<br />
-                        Game progress is saved locally in browser.
+                    <div
+                        id="unity-build-title"
+                        className="mt-8 p-6 bg-gray-800 border border-gray-600 rounded-lg text-center max-w-2xl mx-auto shadow-lg"
+                    >
+                        <h2 className="text-2xl font-bold text-white mb-3">
+                            🔫 Tanks Game 🎮
+                        </h2>
+                        <p className="text-gray-300 mb-2">
+                            Tanks game made with Unity and C#.
+                        </p>
+                        <p className="text-gray-300 mb-3">
+                            8 levels of increasing difficulty with enemy AI growing more sophisticated.
+                        </p>
+                        <p className="text-gray-300 mb-2">
+                            Game progress is saved locally in browser.
+                        </p>
                     </div>
                 </div>
             </div>
-
-            <div className="flex space-x-4 mt-8">
-                <button
-                    onClick={handleFullscreen}
-                    className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-32 flex items-center justify-center"
-                    disabled={isLoading}
-                >
-                    Fullscreen
-                </button>
-            </div>
-
-            {isLoading && (
-                <div className="mt-4 flex items-center">
-                    {loadingSpinner}
-                    <span className="ml-2">Loading game...</span>
-                </div>
-            )}
         </section>
     );
 };

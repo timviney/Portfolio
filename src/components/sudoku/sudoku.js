@@ -194,6 +194,23 @@ const SudokuSolver = () => {
           {solveIsLoading ? (loadingSpinner) : ('Solve')}
         </button>
       </div>
+      <div
+        id="title"
+        className="mt-8 p-6 bg-gray-800 border border-gray-600 rounded-lg text-center max-w-2xl mx-auto shadow-lg"
+      >
+        <h2 className="text-2xl font-bold text-white mb-3">
+          Sudoku Solver! 🧩
+        </h2>
+        <p className="text-gray-300 mb-2">
+          Input your own problem to solve using MILP optimization
+        </p>
+        <p className="text-gray-300 mb-3">
+          or click Random to pull an example from the DB.
+        </p>
+        <p className="text-sm text-red-300 bg-red-900/20 px-3 py-2 rounded border border-red-700/50 inline-block">
+          I pay for the cheap AWS so give it a moment to wake up after the first call 😁
+        </p>
+      </div>
     </section>
   );
 };
