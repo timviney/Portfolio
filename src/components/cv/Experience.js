@@ -19,7 +19,7 @@ const Experience = () => {
             title="Software Developer"
             subTitle="Axi (2024 - )"
             result="London"
-            des="Software Developer in the payments team."
+            des="Software Developer in the Order Management System team."
           />
           <CvCard
             title="Software Developer / Analytical Consultant"

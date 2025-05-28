@@ -28,7 +28,7 @@ const LeftBanner = () => {
           />
         </h2>
         <p className="text-base font-bodyFont leading-6 tracking-wide">
-        Over 4 years' experience in building and maintaining models and applications.
+        Over 5 years' experience in building and maintaining models and applications.
         </p>
       </div>
       <div className="flex flex-col xl:flex-row gap-6 lgl:gap-0 justify-between">
