@@ -154,7 +154,11 @@ const TanksGame = () => {
                 <div id="unity-footer" className={`${isLoading ? 'hidden' : ''}`}>
                     <div id="unity-logo-title-footer"></div>
                     <div id="unity-fullscreen-button" className="cursor-pointer"></div>
-                    <div id="unity-build-title">Tanks game made with Unity and C#. 8 levels of increasing difficulty with enemy AI growing more sophisticated.</div>
+                    <div id="unity-build-title">
+                        Tanks game made with Unity and C#.<br />
+                        8 levels of increasing difficulty with enemy AI growing more sophisticated.<br />
+                        Game progress is saved locally in browser.
+                    </div>
                 </div>
             </div>
 
