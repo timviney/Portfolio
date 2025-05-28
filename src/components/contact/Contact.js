@@ -13,21 +13,18 @@ const Contact = () => {
   const [successMsg, setSuccessMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // ========== Email Validation start here ==============
   const emailValidation = () => {
     return String(email)
       .toLowerCase()
-      .match(/^\w+([-]?\w+)*@\w+([-]?\w+)*(\.\w{2,3})+$/);
-  };
+      .match(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/);
+    };
   
-  // ========== Phone Validation start here ==============
   const phoneValidation = () => {
     // Basic phone validation - allows various formats
     return String(phoneNumber)
       .replace(/\s/g, '') // Remove spaces
       .match(/^[+]?[0-9][\d]{0,15}$/); // Basic international format
   };
-  // ========== Validation end here ================
 
   const handleSend = async (e) => {
     e.preventDefault();
