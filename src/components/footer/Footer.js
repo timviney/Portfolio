@@ -1,6 +1,6 @@
 import React from 'react'
-import { FaLinkedinIn } from "react-icons/fa";
-import {me} from '../../assets/index';
+import { FaLinkedinIn, FaGithub } from "react-icons/fa";
+import { me } from '../../assets/index';
 import links from '../../config'
 import { Link } from 'react-scroll';
 
@@ -15,6 +15,11 @@ const Footer = () => {
               <FaLinkedinIn />
             </span>
           </a>
+          <a href={links.github} target="_blank" rel="noopener noreferrer">
+            <span className="bannerIcon">
+              <FaGithub />
+            </span>
+          </a>
         </div>
       </div>
       <div className="w-full h-full">
@@ -22,13 +27,35 @@ const Footer = () => {
           Quick Link
         </h3>
         <ul className="flex flex-col gap-4 font-titleFont font-medium py-6 overflow-hidden">
-          <li>
-            <span className="w-full text-lg relative hover:text-designColor duration-300 group cursor-pointer">
-              <Link to="home" spy={true} smooth={true} offset={-70} duration={500}>
-                Home
-              </Link>
-            <span className="w-full h-[1px] bg-designColor inline-flex absolute left-0 -bottom-1 -translate-x-[100%] group-hover:translate-x-0 transition-transform duration-300"></span>
-            </span>
+          <li className="relative group cursor-pointer">
+            <Link to="home" spy={true} smooth={true} offset={-70} duration={500} className="text-lg hover:text-designColor duration-300 block">
+              Home
+            </Link>
+            <span className="w-full h-[1px] bg-designColor absolute left-0 -bottom-1 -translate-x-[100%] group-hover:translate-x-0 transition-transform duration-300"></span>
+          </li>
+          <li className="relative group cursor-pointer">
+            <Link to="skills" spy={true} smooth={true} offset={-70} duration={500} className="text-lg hover:text-designColor duration-300 block">
+              Skills
+            </Link>
+            <span className="w-full h-[1px] bg-designColor absolute left-0 -bottom-1 -translate-x-[100%] group-hover:translate-x-0 transition-transform duration-300"></span>
+          </li>
+          <li className="relative group cursor-pointer">
+            <Link to="projects" spy={true} smooth={true} offset={-70} duration={500} className="text-lg hover:text-designColor duration-300 block">
+              Projects
+            </Link>
+            <span className="w-full h-[1px] bg-designColor absolute left-0 -bottom-1 -translate-x-[100%] group-hover:translate-x-0 transition-transform duration-300"></span>
+          </li>
+          <li className="relative group cursor-pointer">
+            <Link to="cv" spy={true} smooth={true} offset={-70} duration={500} className="text-lg hover:text-designColor duration-300 block">
+              CV
+            </Link>
+            <span className="w-full h-[1px] bg-designColor absolute left-0 -bottom-1 -translate-x-[100%] group-hover:translate-x-0 transition-transform duration-300"></span>
+          </li>
+          <li className="relative group cursor-pointer">
+            <Link to="contact" spy={true} smooth={true} offset={-70} duration={500} className="text-lg hover:text-designColor duration-300 block">
+              Contact
+            </Link>
+            <span className="w-full h-[1px] bg-designColor absolute left-0 -bottom-1 -translate-x-[100%] group-hover:translate-x-0 transition-transform duration-300"></span>
           </li>
         </ul>
       </div>

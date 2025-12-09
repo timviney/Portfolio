@@ -20,7 +20,7 @@ const Skills = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 xl:gap-20">
         <Card
           title="C# Backend Development"
-          des="5 years' experience building and maintaining key industrial models and applications,
+          des="6 years' experience building and maintaining key industrial models and applications,
            employed by investors, regulators, and the UK government."
           icon={<TbBrandCSharp />}
         />
@@ -32,14 +32,15 @@ const Skills = () => {
         />
         <Card
           title="Azure Devops"
-          des="3 years' experience managing CI/CD processes through Azure pipelines. Confident in yaml, powershell, 
+          des="4 years' experience managing CI/CD processes through Azure pipelines. Confident in yaml, powershell, 
             and automated testing and releasing process."
           icon={<SiAzuredevops />}
         />
         <Card
           title="Cloud Computing"
-          des="3 years' experience running parallel modelling simulations using Azure Batch, reducing run time of
-            simulations by up to 100x compared to single processes."
+          des="Experienced in Distributed Systems, from Azure VMs to 
+          Microservices / Hexagonal Architecture via AKS. Scaled specialised compute using Azure Batch 
+          for high-throughput parallel modelling simulations."
           icon={<TbCloudComputing />}
         />
         <Card
@@ -49,8 +50,8 @@ const Skills = () => {
           icon={<HiOutlineLightBulb />}
         />
         <Card
-          title="Azure Services"
-          des="Experienced in using a wide range of Azure services such as Function apps and CosmosDb."
+          title="Azure & AWS Services"
+          des="Experienced in using a wide range of Azure services such as AKS, Function apps and CosmosDb. Personal projects hosted via AWS services including Lambda, S3, and CloudFront."
           icon={<SiAzurefunctions />}
         />
       </div>

@@ -1,6 +1,6 @@
 import React from 'react'
 import Title from '../layouts/Title'
-import { projectSudoku, projectDataAccess, projectTanks } from "../../assets/index";
+import { projectSudoku, projectDataAccess, projectTanks, projectAlgotrader } from "../../assets/index";
 import ProjectsCard from './ProjectsCard';
 
 const Projects = () => {
@@ -16,6 +16,12 @@ const Projects = () => {
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 xl:gap-14">
+        <ProjectsCard
+          title="Algotrader"
+          des="A C# .NET 8 algorithmic trading backtesting engine that evaluates trading strategies using historical intraday stock market data."
+          src={projectAlgotrader}
+          githubRepo={"https://github.com/timviney/Algotrader"}
+        />
         <ProjectsCard
           title="Tanks Game"
           des="Tanks Game made with Unity/C#. Uses custom bullet physics, game management and logic for increasing AI difficulty."
