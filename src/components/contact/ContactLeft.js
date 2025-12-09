@@ -1,5 +1,5 @@
 import React from 'react'
-import { FaLinkedinIn } from "react-icons/fa";
+import { FaLinkedinIn, FaGithub } from "react-icons/fa";
 import { contactImg } from "../../assets/index";
 import links from '../../config';
 
@@ -29,6 +29,11 @@ const ContactLeft = () => {
           <a href={links.linkedin} target="_blank" rel="noopener noreferrer">
             <span className="bannerIcon">
               <FaLinkedinIn />
+            </span>
+          </a>
+          <a href={links.github} target="_blank" rel="noopener noreferrer">
+            <span className="bannerIcon">
+              <FaGithub />
             </span>
           </a>
         </div>

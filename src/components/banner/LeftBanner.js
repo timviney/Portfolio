@@ -1,6 +1,6 @@
 import React from 'react'
 import { useTypewriter, Cursor } from "react-simple-typewriter";
-import { FaLinkedinIn } from "react-icons/fa";
+import { FaLinkedinIn, FaGithub } from "react-icons/fa";
 import tailwindSettings from '../../tailwind-settings.json';
 import links from '../../config';
 
@@ -28,7 +28,7 @@ const LeftBanner = () => {
           />
         </h2>
         <p className="text-base font-bodyFont leading-6 tracking-wide">
-        Over 5 years' experience in building and maintaining models and applications.
+        Over 6 years' experience in building and maintaining models and applications.
         </p>
       </div>
       <div className="flex flex-col xl:flex-row gap-6 lgl:gap-0 justify-between">
@@ -40,6 +40,11 @@ const LeftBanner = () => {
             <a href={links.linkedin} target="_blank" rel="noopener noreferrer">
               <span className="bannerIcon">
                 <FaLinkedinIn />
+              </span>
+            </a>
+            <a href={links.github} target="_blank" rel="noopener noreferrer">
+              <span className="bannerIcon">
+                <FaGithub />
               </span>
             </a>
           </div>
