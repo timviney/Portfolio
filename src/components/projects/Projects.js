@@ -1,6 +1,6 @@
 import React from 'react'
 import Title from '../layouts/Title'
-import { projectSudoku, projectDataAccess, projectTanks, projectAlgotrader } from "../../assets/index";
+import { projectSudoku, projectDataAccess, projectTanks, projectAlgotrader, projectPubPoint } from "../../assets/index";
 import ProjectsCard from './ProjectsCard';
 
 const Projects = () => {
@@ -16,6 +16,13 @@ const Projects = () => {
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 xl:gap-14">
+        <ProjectsCard
+          title="PubPoint"
+          des="App idea collaboration with @timstu98. An app that finds the most convenient pub for a group to get to. Not as simple as it sounds!"
+          src={projectPubPoint}
+          sitePage={"pubpoint"}
+          githubRepo={"https://github.com/timstu98/PubPoint"}
+        />
         <ProjectsCard
           title="Algotrader"
           des="A C# .NET 8 algorithmic trading backtesting engine that evaluates trading strategies using historical intraday stock market data."

@@ -10,6 +10,7 @@ import Projects from "./components/projects/Projects";
 import Cv from "./components/cv/Cv";
 import Sudoku from "./components/sudoku/sudoku";
 import Tanks from "./components/tanks/tanks-game";
+import PubPoint from "./components/pubpoint/pubpoint";
 
 function App() {
   return (
@@ -31,10 +32,13 @@ function App() {
             } />
             <Route path="/sudoku" element={
               <Sudoku />
-              } />
+            } />
             <Route path="/tanks" element={
               <Tanks />
-              } />
+            } />
+            <Route path="/pubpoint" element={
+              <PubPoint />
+            } />
           </Routes>
         </div>
       </div>
