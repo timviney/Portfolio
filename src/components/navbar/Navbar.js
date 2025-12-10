@@ -3,7 +3,7 @@ import { Link as ScrollLink, scroller } from 'react-scroll';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FiMenu } from "react-icons/fi";
 import { MdClose } from "react-icons/md";
-import { FaLinkedinIn } from "react-icons/fa";
+import { FaLinkedinIn, FaGithub } from "react-icons/fa";
 import { logo, me } from "../../assets/index";
 import { navLinksdata } from '../../constants';
 import links from '../../config';
@@ -93,7 +93,13 @@ const Navbar = () => {
                       <FaLinkedinIn />
                     </span>
                   </a>
+                  <a href={links.github} target="_blank" rel="noopener noreferrer">
+                    <span className="bannerIcon">
+                      <FaGithub />
+                    </span>
+                  </a>
                 </div>
+
               </div>
               <span
                 onClick={() => setShowMenu(false)}
