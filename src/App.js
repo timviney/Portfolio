@@ -15,7 +15,7 @@ import PubPoint from "./components/pubpoint/pubpoint";
 function App() {
   return (
     <Router>
-      <div className="w-full h-auto bg-bodyColor text-lightText px-4">
+      <div className="w-full h-auto bg-bodyColor text-lightText px-4" id="app">
         <Navbar />
         <div className="max-w-screen-xl mx-auto">
           <Routes>

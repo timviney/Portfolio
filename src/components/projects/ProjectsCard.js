@@ -2,32 +2,42 @@ import React from 'react'
 import { BsGithub } from "react-icons/bs";
 import { FaGlobe } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
+import { scroller } from 'react-scroll';
+
+function scrollToTop() {
+  scroller.scrollTo('app', {
+    duration: 500,
+    smooth: true,
+    offset: 0,
+  });
+}
 
 const ProjectsCard = ({ title, des, src, githubRepo, sitePage }) => {
   const navigate = useNavigate();
 
   const handleImageClick = () => {
-    if (sitePage){
+    if (sitePage) {
       navigate("/" + sitePage);
+      scrollToTop();
     } else {
       window.open(githubRepo);
     }
   };
 
   const handleSiteLink = () => {
-    if (sitePage){
+    if (sitePage) {
       navigate("/" + sitePage);
     }
   }
 
   const handleGithubLink = () => {
-    if (githubRepo){
+    if (githubRepo) {
       window.open(githubRepo);
     }
   }
 
   return (
-    <div 
+    <div
       className="w-full p-4 xl:px-12 h-auto xl:py-10 rounded-lg shadow-shadowOne flex flex-col bg-gradient-to-r from-bodyColor to-[#202327] group hover:bg-gradient-to-b hover:from-gray-900 hover:gray-900 transition-colors duration-1000"      >
       <div className="w-full h-[80%] overflow-hidden rounded-lg">
         <img
@@ -46,14 +56,14 @@ const ProjectsCard = ({ title, des, src, githubRepo, sitePage }) => {
             <div className="flex gap-2">
               {githubRepo && (
                 <span className="text-lg w-10 h-10 rounded-full bg-black inline-flex justify-center items-center text-gray-400 hover:text-designColor duration-300 cursor-pointer">
-                <BsGithub 
-                  onClick={handleGithubLink}
-                />
-              </span>
+                  <BsGithub
+                    onClick={handleGithubLink}
+                  />
+                </span>
               )}
               {sitePage && (
                 <span className="text-lg w-10 h-10 rounded-full bg-black inline-flex justify-center items-center text-gray-400 hover:text-designColor duration-300 cursor-pointer">
-                  <FaGlobe 
+                  <FaGlobe
                     onClick={handleSiteLink}
                   />
                 </span>
