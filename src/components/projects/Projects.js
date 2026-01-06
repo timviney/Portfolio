@@ -1,6 +1,6 @@
 import React from 'react'
 import Title from '../layouts/Title'
-import { projectSudoku, projectDataAccess, projectTanks, projectAlgotrader, projectPubPoint } from "../../assets/index";
+import { projectSudoku, projectDataAccess, projectTanks, projectAlgotrader, projectPubPoint, projectMarketData } from "../../assets/index";
 import ProjectsCard from './ProjectsCard';
 
 const Projects = () => {
@@ -16,6 +16,12 @@ const Projects = () => {
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 xl:gap-14">
+        <ProjectsCard
+          title="Market Data Pipeline"
+          des="A market data replay engine and dashboard. Simulates real-time data ingestion, performing tick calculations and utilising Kafka for decoupled persistence and live updates via SignalR."
+          src={projectMarketData}
+          githubRepo={"https://github.com/timviney/MarketDataPipeline"}
+        />
         <ProjectsCard
           title="PubPoint"
           des="App idea collaboration with @timstu98. An app that finds the most convenient pub for a group to get to. Not as simple as it sounds!"

@@ -27,6 +27,7 @@ const ProjectsCard = ({ title, des, src, githubRepo, sitePage }) => {
   const handleSiteLink = () => {
     if (sitePage) {
       navigate("/" + sitePage);
+      scrollToTop();
     }
   }
 

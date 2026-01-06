@@ -6,6 +6,7 @@ import projectDataAccess from "./images/projects/dataaccess.png";
 import projectTanks from "./images/projects/tanks.png";
 import projectAlgotrader from "./images/projects/algotrader.png";
 import projectPubPoint from "./images/projects/pubPoint.png";
+import projectMarketData from "./images/projects/marketdata.png";
 import contactImg from "./images/contact/contactImg.png";
 import pubPointPic1 from "./images/pubpoint/pic1.png";
 import pubPointPic2 from "./images/pubpoint/pic2.png";
@@ -29,6 +30,7 @@ export {
   projectTanks,
   projectAlgotrader,
   projectPubPoint,
+  projectMarketData,
   contactImg,
   cartoonMe,
   pubPointGallery
