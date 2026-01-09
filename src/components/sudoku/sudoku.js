@@ -1,7 +1,8 @@
-import React, { useState, useRef } from 'react';
-import { solveMatrix, randomSudoku } from '../../api/api';
+import React, { useState, useRef, useEffect } from 'react';
+import { solveMatrix, randomSudoku, wakeUpDatabase, wakeUpSolver } from '../../api/api';
 
 const SudokuSolver = () => {
+  const [isInitializing, setIsInitializing] = useState(true);
 
   const emptyGrid = Array(9)
     .fill(0)
@@ -20,6 +21,14 @@ const SudokuSolver = () => {
 
   // Control keys refs
   const inputRefs = useRef(Array(9).fill(null).map(() => Array(9).fill(null)));
+
+  useEffect(() => {
+    const initializeServices = async () => {
+      await Promise.all([wakeUpDatabase(), wakeUpSolver()]);
+      setIsInitializing(false);
+    };
+    initializeServices();
+  }, []);
 
   const handleChange = (row, col, value) => {
     if (!locked && (value === '' || (/^[1-9]$/.test(value) && value.length === 1))) {
@@ -131,7 +140,7 @@ const SudokuSolver = () => {
       ></path>
     </svg>;
 
-  const errorBox = <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 w-1/2">
+  const errorBox = <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 w-full max-w-2xl">
     <span className="block sm:inline">{error}</span>
     <button
       onClick={() => setError('')} // Close button clears the error
@@ -144,8 +153,38 @@ const SudokuSolver = () => {
     </button>
   </div>;
 
+  if (isInitializing) {
+    return (
+      <section className="w-full py-8 pb-12 flex flex-col items-center justify-center min-h-screen">
+        <div className="flex flex-col items-center">
+          <svg
+            className="animate-spin h-12 w-12 text-blue-500 mb-4"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+            ></path>
+          </svg>
+          <p className="text-xl text-gray-700">I pay for the cheap AWS so please wait for the functions to wake up 😁</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section className="w-full py-20 flex flex-col items-center">
+    <section className="w-full py-8 pb-12 flex flex-col items-center min-h-screen">
       <h1 className="text-3xl font-bold mb-8">Sudoku Solver</h1>
       {error && (errorBox)}
       <div className="grid grid-cols-9 border-3 border-black">
@@ -206,9 +245,6 @@ const SudokuSolver = () => {
         </p>
         <p className="text-gray-300 mb-3">
           or click Random to pull an example from the DB.
-        </p>
-        <p className="text-sm text-red-300 bg-red-900/20 px-3 py-2 rounded border border-red-700/50 inline-block">
-          I pay for the cheap AWS so give it a moment to wake up after the first call 😁
         </p>
       </div>
     </section>
