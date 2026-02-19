@@ -14,6 +14,9 @@ concurrency:
 
 jobs:
   build:
+    env:
+      REACT_APP_DATAACCESS_URL: ${{ secrets.REACT_APP_DATAACCESS_URL }}
+      REACT_APP_SUDOKU_URL: ${{ secrets.REACT_APP_SUDOKU_URL }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
