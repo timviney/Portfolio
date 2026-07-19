@@ -11,6 +11,7 @@ import Cv from "./components/cv/Cv";
 import Sudoku from "./components/sudoku/sudoku";
 import Tanks from "./components/tanks/tanks-game";
 import PubPoint from "./components/pubpoint/pubpoint";
+import FinanceDashboard from "./components/finance/FinanceDashboard";
 
 function App() {
   return (
@@ -38,6 +39,9 @@ function App() {
             } />
             <Route path="/pubpoint" element={
               <PubPoint />
+            } />
+            <Route path="/finance" element={
+              <FinanceDashboard />
             } />
           </Routes>
         </div>

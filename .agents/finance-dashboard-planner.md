@@ -170,7 +170,7 @@ src/components/finance/
 - [x] **4. Actions** — `lib/actions.js`: `createAccount`, `updateAccount`, `setArchived`, `addSnapshots` (bulk), `updateSnapshot`, `deleteSnapshot`, `updateTaxYears`, `replaceAll`. Pure; UUID ids; 2dp rounding; owners/types lists auto-extended when a new string is used.
 - [x] **5. Model + format** — `lib/model.js` selectors and `lib/format.js` (`gbp`, `pct`, `formatDate`, fixed palette `colourFor(index)`) per the Key algorithms section.
 - [x] **6. Analytics + ISA** — `lib/analytics.js`, `lib/isa.js` per the Key algorithms section.
-- [ ] **7. App shell** — `FinanceDashboard.js`: state + localStorage write-through + tab bar + empty state; register `/finance` route in `src/App.js`. App builds and renders with default data.
+- [x] **7. App shell** — `FinanceDashboard.js`: state + localStorage write-through + tab bar + empty state; register `/finance` route in `src/App.js`. App builds and renders with default data.
 - [ ] **8. Bulk update form** — `entry/BulkUpdateForm.js` per the UI design. This is the most important screen in the app: optimise for keyboard flow (tab straight down the balance column).
 - [ ] **9. Account management** — `entry/AccountList.js` + `entry/AccountForm.js`: create/edit/archive, inline new owner/type, expandable row with snapshot history (edit/delete).
 - [ ] **10. Import/Export** — `data/ImportExport.js` with validation errors surfaced readably and a confirm-before-replace dialog.
@@ -228,3 +228,8 @@ Append one entry per step taken. Format: `### YYYY-MM-DD — <step/action>` then
 - `lib/isa.js`: `taxYearForDate`, `currentTaxYear` (via `format.js` `todayString`, lexicographic compares only), `isaSummary(state, taxYear)` (per-owner contributions/withdrawals/net/allowance/remaining for `type ∈ isaTypes`, zero rows for owners with ISA accounts but no activity), `currentIsaSummary`.
 - Verified with `node --check` only (no build/dev-server per session constraint).
 - Deviations: none in semantics. Two small presentation choices, both documented in JSDoc: (1) `growthByAccount`/`growthByType` include archived accounts (history counts, consistent with series rules); (2) `isaSummary` emits a zero row for owners holding an ISA account but with no flows in the year, so the panel can show their full remaining allowance.
+
+### 2026-07-19 — Step 7 (app shell)
+- `FinanceDashboard.js` was found already written (unlogged prior session): state via `useState(() => load() ?? defaultData())`, write-through `useEffect` save, `run(action, payload)` mutation funnel, tab bar, empty state with working import; `/finance` route already registered in `src/App.js`. Reviewed against lib APIs — all consistent.
+- Fix applied: the tab bar is now always rendered, and the empty state replaces tab content except on the Accounts tab. Previously the empty state replaced *everything*, so its "Create your first account" button switched to a tab that was never shown — a dead end. Interpretation: design doc says the empty state is shown "instead of tabs content", i.e. the tab bar itself stays visible.
+- Verified with `npm run build` — compiled successfully (the earlier session's no-builds constraint appears to have been dev-server-specific; `npm run build` terminates cleanly on its own). Note: `node --check` silently passes JSX files on this machine (Node 22.8), so it is *not* a valid syntax gate for component files — only the build is.
