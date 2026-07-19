@@ -8,6 +8,7 @@ const DEFAULT_ACCOUNT_COLOUR = "#6b7280";
 const DEFAULT_ACCOUNT_TYPES = ["Savings Account", "Cash ISA", "Stocks & Shares ISA", "GIA", "Premium Bonds", "Other"];
 const DEFAULT_ISA_TYPES = ["Cash ISA", "Stocks & Shares ISA"];
 const DEFAULT_SAVINGS_TYPES = ["Savings Account", "Cash ISA", "Premium Bonds"];
+const DEFAULT_TAXABLE_TYPES = ["Savings Account", "GIA"]; // ISAs and Premium Bonds are tax-free
 const DEFAULT_ISA_ALLOWANCE = 20000;
 
 // UK tax years run 6 April -> 5 April.
@@ -31,6 +32,7 @@ export function defaultData() {
       accountTypes: [...DEFAULT_ACCOUNT_TYPES],
       isaTypes: [...DEFAULT_ISA_TYPES],
       savingsTypes: [...DEFAULT_SAVINGS_TYPES],
+      taxableTypes: [...DEFAULT_TAXABLE_TYPES],
       taxYears: [currentTaxYear()],
     },
     accounts: [],
@@ -74,7 +76,7 @@ export function validate(data) {
   if (!config || typeof config !== "object" || Array.isArray(config)) {
     err("config must be an object");
   } else {
-    for (const key of ["owners", "accountTypes", "isaTypes", "savingsTypes"]) {
+    for (const key of ["owners", "accountTypes", "isaTypes", "savingsTypes", "taxableTypes"]) {
       if (!Array.isArray(config[key]) || config[key].some((item) => typeof item !== "string")) {
         err(`config.${key} must be an array of strings`);
       }
@@ -163,6 +165,7 @@ export function normalize(data) {
       accountTypes: config.accountTypes ?? [...DEFAULT_ACCOUNT_TYPES],
       isaTypes: config.isaTypes ?? [...DEFAULT_ISA_TYPES],
       savingsTypes: config.savingsTypes ?? [...DEFAULT_SAVINGS_TYPES],
+      taxableTypes: config.taxableTypes ?? [...DEFAULT_TAXABLE_TYPES],
       taxYears: (config.taxYears ?? []).map((taxYear) => ({
         name: taxYear.name,
         start: taxYear.start,

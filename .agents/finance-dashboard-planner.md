@@ -45,7 +45,7 @@ Agreed with the user on 2026-07-19. Do not silently change these.
 src/components/finance/
   FinanceDashboard.js        Route entry. Owns all state. Tab layout (see below).
   dashboard/
-    SummaryCards.js          Total / savings / investments / ISA / GIA cards
+    SummaryCards.js          Total / savings / investments / ISA / GIA / taxable / tax-free cards
     PortfolioValueChart.js   Total value over time (line)
     AccountBalancesChart.js  Per-account balances over time (multi-line)
     AllocationChart.js       One reusable pie; prop groupBy = account | type | provider | owner
@@ -88,7 +88,6 @@ src/components/finance/
     "isaTypes": ["Cash ISA", "Stocks & Shares ISA"],
     "taxableTypes": ["Savings Account", "GIA"],
     "savingsTypes": ["Savings Account", "Cash ISA", "Premium Bonds"],
-    "stocksTypes": ["Stocks & Shares ISA", "GIA"],
     "taxYears": [
       { "name": "2026/27", "start": "2026-04-06", "end": "2027-04-05", "isaAllowance": 20000 }
     ]
@@ -125,6 +124,7 @@ src/components/finance/
 - `contribution` / `withdrawal` on a snapshot = external money in/out **between the previous snapshot of that account and this one**. Default `0`.
 - Growth therefore = balance deltas − net flows. Net contributions = Σ contributions − Σ withdrawals.
 - **Savings vs investments split**: an account counts as "savings" if its `type ∈ config.savingsTypes`; everything else is an investment. (This is why `savingsTypes` exists in config — design doc asks for both summary cards with configurable types.)
+- **Taxable vs tax-free split**: an account is "taxable" if its `type ∈ config.taxableTypes` (default: Savings Account, GIA); everything else (ISAs, Premium Bonds) is tax-free. Drives the taxable/tax-free summary totals. This is an independent axis from savings/investments — a GIA is a taxable investment, a Cash ISA is tax-free savings.
 - IDs: `crypto.randomUUID()`. Money: plain numbers, rounded to 2dp on write in `actions.js`.
 - Dates: `YYYY-MM-DD` strings, compared **lexicographically**. Never `new Date(isoString)` for grouping/sorting (UTC-midnight timezone shift bug). Construct Dates from split parts only when formatting for display.
 - Multiple snapshots for the same account on the same date are **legal** (same-day corrections); the later entry in the array wins.
@@ -149,7 +149,7 @@ src/components/finance/
 
 **Tabs** in `FinanceDashboard`: `Dashboard | Update | Accounts | ISA | Data`
 
-- **Dashboard**: SummaryCards (total, savings, investments, ISA, GIA), PortfolioValueChart, AccountBalancesChart, 4 × AllocationChart (grid; groupBy account/type/provider/owner), StatsPanel.
+- **Dashboard**: SummaryCards (total, savings, investments, ISA, GIA, taxable, tax-free), PortfolioValueChart, AccountBalancesChart, 4 × AllocationChart (grid; groupBy account/type/provider/owner), StatsPanel.
 - **Update**: BulkUpdateForm — date picker (default today), one row per active account showing name + last balance (+ its date), empty "new balance" input per row (placeholder = last balance), per-row expandable contribution/withdrawal/notes. Save creates snapshots **only for rows with a non-empty new balance**, then clears inputs and confirms "Saved N snapshots".
   - *Simplification of the design doc's "selecting multiple accounts": the non-empty field IS the selection — no checkboxes. Fewer clicks, same outcome.*
 - **Accounts**: AccountList + AccountForm. Expanding a row shows notes/details and the snapshot history table with edit/delete (typo-fixing only).
@@ -164,11 +164,11 @@ src/components/finance/
 
 > Order matters: `lib/` before UI, and the app must build after every step.
 
-- [ ] **1. Install Recharts** — `npm install recharts`. Verify `npm start` still works.
-- [ ] **2. Scaffold + schema** — create the folder structure; implement `lib/schema.js` (`defaultData()`, `validate()`, `normalize()`, `STORAGE_KEY`) exactly per the Data model section.
-- [ ] **3. Storage** — `lib/storage.js`: `load()` (localStorage → parse → validate, return `null` if absent/invalid), `save()`, `exportFile(state)` (Blob download), `importFile(file)` (async → validated+normalized state or thrown readable error).
-- [ ] **4. Actions** — `lib/actions.js`: `createAccount`, `updateAccount`, `setArchived`, `addSnapshots` (bulk), `updateSnapshot`, `deleteSnapshot`, `updateTaxYears`, `replaceAll`. Pure; UUID ids; 2dp rounding; owners/types lists auto-extended when a new string is used.
-- [ ] **5. Model + format** — `lib/model.js` selectors and `lib/format.js` (`gbp`, `pct`, `formatDate`, fixed palette `colourFor(index)`) per the Key algorithms section.
+- [x] **1. Install Recharts** — `npm install recharts`. Verify `npm start` still works.
+- [x] **2. Scaffold + schema** — create the folder structure; implement `lib/schema.js` (`defaultData()`, `validate()`, `normalize()`, `STORAGE_KEY`) exactly per the Data model section.
+- [x] **3. Storage** — `lib/storage.js`: `load()` (localStorage → parse → validate, return `null` if absent/invalid), `save()`, `exportFile(state)` (Blob download), `importFile(file)` (async → validated+normalized state or thrown readable error).
+- [x] **4. Actions** — `lib/actions.js`: `createAccount`, `updateAccount`, `setArchived`, `addSnapshots` (bulk), `updateSnapshot`, `deleteSnapshot`, `updateTaxYears`, `replaceAll`. Pure; UUID ids; 2dp rounding; owners/types lists auto-extended when a new string is used.
+- [x] **5. Model + format** — `lib/model.js` selectors and `lib/format.js` (`gbp`, `pct`, `formatDate`, fixed palette `colourFor(index)`) per the Key algorithms section.
 - [ ] **6. Analytics + ISA** — `lib/analytics.js`, `lib/isa.js` per the Key algorithms section.
 - [ ] **7. App shell** — `FinanceDashboard.js`: state + localStorage write-through + tab bar + empty state; register `/finance` route in `src/App.js`. App builds and renders with default data.
 - [ ] **8. Bulk update form** — `entry/BulkUpdateForm.js` per the UI design. This is the most important screen in the app: optimise for keyboard flow (tab straight down the balance column).
@@ -188,7 +188,7 @@ src/components/finance/
 
 - Accounts: all listed fields; configurable types/owners; archive; notes.
 - History: immutable-by-default snapshots; independent per-account update days handled via carry-forward.
-- Dashboard: the 5 summary cards and 6 charts listed in the design doc.
+- Dashboard: 7 summary cards (the design doc's 5 + taxable/tax-free, user decision 2026-07-19) and the 6 charts listed in the design doc.
 - Analytics v1: exactly the listed calculations — nothing extra.
 - ISA: contributions by tax year and owner, remaining allowance, configurable tax years.
 - Data entry: multi-account, single-save bulk update; fast.
@@ -205,3 +205,20 @@ Append one entry per step taken. Format: `### YYYY-MM-DD — <step/action>` then
 - Architecture, schema, algorithms, UI design and steps agreed with the user following the design doc's "Before Writing Code" process.
 - Locked decisions recorded above (Recharts; localStorage + file; GBP-assumed; no tests; route `/finance`).
 - Notable simplifications vs. the design doc, accepted by the user: no row checkboxes in bulk update (non-empty field = selection); `savingsTypes` config added to support the savings/investments split with configurable types; TWR implemented as a documented approximation.
+
+### 2026-07-19 — Steps 1–3 confirmed complete
+- Recharts 3.9.2 present in `node_modules` and `package.json`. Did **not** re-run `npm start` (dev-server/build runs were crashing the session; user asked to avoid them).
+- `lib/schema.js` and `lib/storage.js` reviewed against the Data model section — complete.
+- Deviation from the plan's example JSON, ~~accepted: `config.taxableTypes` and `config.stocksTypes` dropped~~ — **superseded the same day**: `taxableTypes` was reinstated (user decision, see next-but-one entry); `stocksTypes` remains dropped (still no consumer).
+
+### 2026-07-19 — Steps 4–5 (actions, model, format)
+- `lib/actions.js`: all planned transitions; money coerced + rounded 2dp on write; snapshots appended (never sorted) so later array entries win same-date ties; new accounts default their colour from the palette by index.
+- `lib/format.js`: `gbp`, `gbpShort` (chart axis labels), `pct`, `formatDate`, `todayString()` (local, not `toISOString` — UTC shift), `colourFor` (10-colour palette, first = `designColor`).
+- `lib/model.js`: `activeAccounts`, `latestByAccount` (single scan, `>=` = later-entry-wins), `accountHistory`, `portfolioSeries` (carry-forward over union of dates, per-account cursors), `balanceSeriesByAccount` (null before an account's first snapshot so chart lines start correctly), `summaryTotals`, `allocationBy` (active accounts, zero-slices dropped, value-desc).
+- **Stopped here at user request, mid-session. Next: step 6 (`lib/analytics.js`, `lib/isa.js`), then steps 7–15 (UI). No builds/dev-server runs were attempted; nothing verified beyond code review yet.**
+
+### 2026-07-19 — Decision change: taxable vs tax-free totals
+- User pointed out Premium Bonds are untaxed and must be distinguished from ordinary (taxed) savings. Chosen surface: **tax-free / taxable summary totals** (their option 1).
+- `config.taxableTypes` restored to `schema.js` (defaults `["Savings Account", "GIA"]`; validation + normalization included). `summaryTotals` in `model.js` now also returns `taxable` and `taxFree`.
+- SummaryCards (step 11) will show 7 cards: total, savings, investments, ISA, GIA, taxable, tax-free. Plan's data model, semantics, UI design and DoD sections updated to match.
+- `config.stocksTypes` remains dropped — still no consumer.
