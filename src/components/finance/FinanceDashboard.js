@@ -12,6 +12,7 @@ import AccountTypeChart from "./dashboard/AccountTypeChart";
 import TwrChart from "./dashboard/TwrChart";
 import AllocationChart from "./dashboard/AllocationChart";
 import StatsPanel from "./dashboard/StatsPanel";
+import IsaPanel from "./dashboard/IsaPanel";
 import { todayString, yearAgoString } from "./lib/format";
 
 // Route entry for the /finance mini-app. Owns the single state object (the whole
@@ -27,14 +28,6 @@ const TABS = ["Dashboard", "Update", "Accounts", "ISA", "File"];
 
 const cardClass =
   "bg-black bg-opacity-25 border border-gray-600 rounded-lg shadow-shadowOne p-8";
-
-function Placeholder({ children }) {
-  return (
-    <div className={cardClass}>
-      <p className="text-lightText font-bodyFont">{children}</p>
-    </div>
-  );
-}
 
 function FinanceDashboard() {
   const [state, setState] = useState(null); // null = no document open (start screen)
@@ -240,9 +233,7 @@ function FinanceDashboard() {
             )}
             {tab === "Update" && <BulkUpdateForm state={state} run={run} />}
             {tab === "Accounts" && <AccountList state={state} run={run} />}
-            {tab === "ISA" && (
-              <Placeholder>ISA allowance tracking arrives in step 14.</Placeholder>
-            )}
+            {tab === "ISA" && <IsaPanel state={state} run={run} />}
             {tab === "File" && (
               <FilePanel
                 state={state}

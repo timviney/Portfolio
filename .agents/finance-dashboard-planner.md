@@ -185,7 +185,7 @@ src/components/finance/
 - [x] **12. Remaining charts** — `AccountBalancesChart.js`, `AllocationChart.js` × 4.
 - [x] **13. Stats panel** — `StatsPanel.js` covering the design doc's Analytics v1 list (with TWR footnote).
 - [x] **13b. Dashboard date range + extra charts** — user request: start/end date picker for all dashboard stats/charts (default last year), accounts chart as stacked area, matching by-type area chart, cumulative TWR line chart. Adds `seriesInRange`/`balanceSeriesByType` + `asOf` params (model), `flowTotals` range + `twrSeries`/`twrOverRange` (analytics), `yearAgoString` (format), `DateRangePicker`/`AccountTypeChart`/`TwrChart` (dashboard).
-- [ ] **14. ISA panel** — `IsaPanel.js` incl. tax year editor.
+- [x] **14. ISA panel** — `IsaPanel.js` incl. tax year editor.
 - [ ] **15. Styling pass** — consistent with site theme tokens; check at mobile width too.
 - [ ] **16. End-to-end manual verification** — exercise the full workflow in `npm start`: create accounts → bulk updates across several dates → charts/cards/stats/ISA update correctly → export → import roundtrip → validation errors on a doctored file → archive behaviour → refresh persistence.
 - [ ] **17. Final review** — walk the design doc section by section and confirm every requirement is met (or consciously deferred with the user). `npm run build` passes clean.
@@ -298,3 +298,10 @@ Append one entry per step taken. Format: `### YYYY-MM-DD — <step/action>` then
 - Dashboard: `DateRangePicker.js` (start/end date inputs, clamped so start ≤ end; range state lives in FinanceDashboard so it survives tab switches, default = last year → today); `AccountBalancesChart.js` converted from lines to a stacked `AreaChart` (fillOpacity 0.4, `connectNulls`); new `AccountTypeChart.js` (same stacked-area form, palette colours by index); new `TwrChart.js` (cumulative TWR line, pct axis/tooltip, approximation footnote). `PortfolioValueChart` clipped by range; `StatsPanel` now computes over the range (title shows the selected dates).
 - Decisions: (1) summary cards and allocation pies react to the range via as-of-end valuation (default end = today, so default view is unchanged); (2) range clamping in the picker rather than error states.
 - `npm run build` compiled successfully. Visual check still pending (step 16).
+
+
+### 2026-07-19 — Step 14 (ISA panel)
+- `dashboard/IsaPanel.js`, wired into the ISA tab as `<IsaPanel state={state} run={run} />`. Header holds the tax year `<select>` (defaults to the tax year containing today via `currentTaxYear`, else the last configured) and the editor toggle. Summary table per owner from `isaSummary`: contributions, withdrawals, net, remaining allowance (remaining in designColor, red when over-contributed). Guards for no configured tax years and no ISA accounts.
+- Tax year editor: inline table over `config.taxYears` (name / start / end / allowance), add-row and remove-row, validated on save (name required + unique, YYYY-MM-DD dates, start < end, allowance ≥ 0 via `parseMoney`) and written wholesale through `updateTaxYears`. Remove went beyond the plan's "add/edit" by one button — it's the natural way to fix a mistakenly added year and costs one `filter`.
+- `FinanceDashboard.js`: `Placeholder` component deleted — the ISA tab was its last consumer, so every tab now has real content.
+- `npm run build` compiled successfully.
