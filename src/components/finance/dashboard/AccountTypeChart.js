@@ -9,22 +9,25 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import { balanceSeriesByAccount, seriesInRange } from "../lib/model";
-import { formatDate, gbp, gbpShort } from "../lib/format";
+import { balanceSeriesByType, seriesInRange } from "../lib/model";
+import { colourFor, formatDate, gbp, gbpShort } from "../lib/format";
 import ChartCard, { NoData, chartAxisProps, chartTooltipStyle } from "./ChartCard";
 
-// Per-account balances over time (stacked area) — one area per account that has at
-// least one snapshot, coloured by account.colour. Areas start at each account's
-// first snapshot (null before that) and carry forward after.
+// Balances over time grouped by account type (stacked area). A type's area starts
+// at the first snapshot of any account of that type and carries forward after.
 
-function AccountBalancesChart({ state, range }) {
-  const accountsWithData = state.accounts.filter((account) =>
-    state.snapshots.some((snapshot) => snapshot.accountId === account.id)
-  );
-  const series = seriesInRange(balanceSeriesByAccount(state, accountsWithData), range.start, range.end);
+function AccountTypeChart({ state, range }) {
+  const types = [
+    ...new Set(
+      state.accounts
+        .filter((account) => state.snapshots.some((snapshot) => snapshot.accountId === account.id))
+        .map((account) => account.type || "Unknown")
+    ),
+  ];
+  const series = seriesInRange(balanceSeriesByType(state), range.start, range.end);
 
   return (
-    <ChartCard title="Account balances">
+    <ChartCard title="Balances by account type">
       {series.length === 0 ? (
         <NoData />
       ) : (
@@ -40,15 +43,14 @@ function AccountBalancesChart({ state, range }) {
                 formatter={(value) => gbp(value)}
               />
               <Legend wrapperStyle={{ fontSize: "0.8rem", color: "#9ca3af" }} />
-              {accountsWithData.map((account) => (
+              {types.map((type, index) => (
                 <Area
-                  key={account.id}
+                  key={type}
                   type="monotone"
-                  dataKey={account.id}
-                  name={account.name}
+                  dataKey={type}
                   stackId="1"
-                  stroke={account.colour}
-                  fill={account.colour}
+                  stroke={colourFor(index)}
+                  fill={colourFor(index)}
                   fillOpacity={0.4}
                   connectNulls
                 />
@@ -61,4 +63,4 @@ function AccountBalancesChart({ state, range }) {
   );
 }
 
-export default AccountBalancesChart;
+export default AccountTypeChart;

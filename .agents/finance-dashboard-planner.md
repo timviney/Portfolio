@@ -47,7 +47,11 @@ src/components/finance/
   dashboard/
     SummaryCards.js          Total / savings / investments / ISA / GIA / taxable / tax-free cards
     PortfolioValueChart.js   Total value over time (line)
-    AccountBalancesChart.js  Per-account balances over time (multi-line)
+    AccountBalancesChart.js  Per-account balances over time (stacked area)
+    AccountTypeChart.js      Balances over time grouped by account type (stacked area)
+    TwrChart.js              Cumulative time-weighted return over time (line)
+    DateRangePicker.js       Start/end inputs; drives every chart and stat on the tab
+    ChartCard.js             Shared chart card wrapper + dark-theme Recharts constants
     AllocationChart.js       One reusable pie; prop groupBy = account | type | provider | owner
     StatsPanel.js            Growth, % growth, contributions, withdrawals, net, TWR, growth by account/type
     IsaPanel.js              ISA contributions by tax year & owner, remaining allowance + tax year config editor
@@ -149,7 +153,7 @@ src/components/finance/
 
 **Tabs** in `FinanceDashboard`: `Dashboard | Update | Accounts | ISA | File`. The tab bar also shows an unsaved-changes indicator and a Save button.
 
-- **Dashboard**: SummaryCards (total, savings, investments, ISA, GIA, taxable, tax-free), PortfolioValueChart, AccountBalancesChart, 4 × AllocationChart (grid; groupBy account/type/provider/owner), StatsPanel.
+- **Dashboard**: DateRangePicker (start/end, defaults to the last year; everything on the tab is filtered to it — series clipped with carry-forward, summary cards and pies valued as-of the end date, stats computed over the range), SummaryCards (total, savings, investments, ISA, GIA, taxable, tax-free), PortfolioValueChart, AccountBalancesChart (stacked area), AccountTypeChart (stacked area by type), TwrChart (cumulative TWR line), 4 × AllocationChart (grid; groupBy account/type/provider/owner), StatsPanel.
 - **Update**: BulkUpdateForm — date picker (default today), one row per active account showing name + last balance (+ its date), empty "new balance" input per row (placeholder = last balance), per-row expandable contribution/withdrawal/notes. Save creates snapshots **only for rows with a non-empty new balance**, then clears inputs and confirms "Saved N snapshots".
   - *Simplification of the design doc's "selecting multiple accounts": the non-empty field IS the selection — no checkboxes. Fewer clicks, same outcome.*
 - **Accounts**: AccountList + AccountForm. Expanding a row shows notes/details and the snapshot history table with edit/delete (typo-fixing only).
@@ -180,6 +184,7 @@ src/components/finance/
 - [x] **11. Summary cards + portfolio chart** — `SummaryCards.js`, `PortfolioValueChart.js`.
 - [x] **12. Remaining charts** — `AccountBalancesChart.js`, `AllocationChart.js` × 4.
 - [x] **13. Stats panel** — `StatsPanel.js` covering the design doc's Analytics v1 list (with TWR footnote).
+- [x] **13b. Dashboard date range + extra charts** — user request: start/end date picker for all dashboard stats/charts (default last year), accounts chart as stacked area, matching by-type area chart, cumulative TWR line chart. Adds `seriesInRange`/`balanceSeriesByType` + `asOf` params (model), `flowTotals` range + `twrSeries`/`twrOverRange` (analytics), `yearAgoString` (format), `DateRangePicker`/`AccountTypeChart`/`TwrChart` (dashboard).
 - [ ] **14. ISA panel** — `IsaPanel.js` incl. tax year editor.
 - [ ] **15. Styling pass** — consistent with site theme tokens; check at mobile width too.
 - [ ] **16. End-to-end manual verification** — exercise the full workflow in `npm start`: create accounts → bulk updates across several dates → charts/cards/stats/ISA update correctly → export → import roundtrip → validation errors on a doctored file → archive behaviour → refresh persistence.
@@ -283,3 +288,13 @@ Append one entry per step taken. Format: `### YYYY-MM-DD — <step/action>` then
 - `lib/analytics.js`: added `flowTotals(state)` ({ contributions, withdrawals, net }) — the StatsPanel needs the split totals and UI components must not sum flows themselves.
 - Dashboard tab in `FinanceDashboard.js` now composes all of the above; the `Placeholder` component remains only for the ISA tab (step 14).
 - `npm run build` compiled successfully. Charts not yet visually verified in the browser — folded into step 16.
+
+
+### 2026-07-19 — Step 13b (dashboard date range + extra charts)
+- User request: a start/end date picker driving all dashboard stats/charts (defaulting to the last year), the accounts chart as an area chart, a matching by-type area chart, and a TWR line chart.
+- `lib/model.js`: `seriesInRange(series, start, end)` clips any dated series to the range and prepends a synthetic carry-forward point at `start` so charts begin at the range edge; `balanceSeriesByType(state)` (per-type carried sums, null before a type's first snapshot); `latestByAccount`/`summaryTotals`/`allocationBy` gained an optional `asOf` date (summary cards and pies are valued as-of the range end).
+- `lib/analytics.js`: `flowTotals(state, start, end)` (optional (start, end] window, same semantics as `netContributions`); `twrSeries(state)` (cumulative TWR at each portfolio-series point, 0 baseline at the first date); `twrOverRange(state, start, end)` (chained ratio (1+T_end)/(1+T_start) − 1). `twrApproximation` kept (whole-history convenience, no current UI consumer).
+- `lib/format.js`: `yearAgoString()` for the default range start.
+- Dashboard: `DateRangePicker.js` (start/end date inputs, clamped so start ≤ end; range state lives in FinanceDashboard so it survives tab switches, default = last year → today); `AccountBalancesChart.js` converted from lines to a stacked `AreaChart` (fillOpacity 0.4, `connectNulls`); new `AccountTypeChart.js` (same stacked-area form, palette colours by index); new `TwrChart.js` (cumulative TWR line, pct axis/tooltip, approximation footnote). `PortfolioValueChart` clipped by range; `StatsPanel` now computes over the range (title shows the selected dates).
+- Decisions: (1) summary cards and allocation pies react to the range via as-of-end valuation (default end = today, so default view is unchanged); (2) range clamping in the picker rather than error states.
+- `npm run build` compiled successfully. Visual check still pending (step 16).

@@ -5,10 +5,14 @@ import BulkUpdateForm from "./entry/BulkUpdateForm";
 import AccountList from "./entry/AccountList";
 import FilePanel from "./data/FilePanel";
 import SummaryCards from "./dashboard/SummaryCards";
+import DateRangePicker from "./dashboard/DateRangePicker";
 import PortfolioValueChart from "./dashboard/PortfolioValueChart";
 import AccountBalancesChart from "./dashboard/AccountBalancesChart";
+import AccountTypeChart from "./dashboard/AccountTypeChart";
+import TwrChart from "./dashboard/TwrChart";
 import AllocationChart from "./dashboard/AllocationChart";
 import StatsPanel from "./dashboard/StatsPanel";
+import { todayString, yearAgoString } from "./lib/format";
 
 // Route entry for the /finance mini-app. Owns the single state object (the whole
 // JSON document); all mutations go through pure functions in lib/actions.js via
@@ -36,6 +40,7 @@ function FinanceDashboard() {
   const [state, setState] = useState(null); // null = no document open (start screen)
   const [savedDoc, setSavedDoc] = useState(null); // last saved/opened document object
   const [tab, setTab] = useState("Dashboard");
+  const [range, setRange] = useState(() => ({ start: yearAgoString(), end: todayString() }));
   const [openError, setOpenError] = useState(null); // start/empty-screen open failures
   const [pendingAction, setPendingAction] = useState(null); // guarded Open/New
   const fileInputRef = useRef(null);
@@ -218,16 +223,19 @@ function FinanceDashboard() {
           <>
             {tab === "Dashboard" && (
               <div className="flex flex-col gap-4">
-                <SummaryCards state={state} />
-                <PortfolioValueChart state={state} />
-                <AccountBalancesChart state={state} />
+                <DateRangePicker range={range} onChange={setRange} />
+                <SummaryCards state={state} asOf={range.end} />
+                <PortfolioValueChart state={state} range={range} />
+                <AccountBalancesChart state={state} range={range} />
+                <AccountTypeChart state={state} range={range} />
+                <TwrChart state={state} range={range} />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <AllocationChart state={state} groupBy="account" title="Allocation by account" />
-                  <AllocationChart state={state} groupBy="type" title="Allocation by type" />
-                  <AllocationChart state={state} groupBy="provider" title="Allocation by provider" />
-                  <AllocationChart state={state} groupBy="owner" title="Allocation by owner" />
+                  <AllocationChart state={state} groupBy="account" title="Allocation by account" asOf={range.end} />
+                  <AllocationChart state={state} groupBy="type" title="Allocation by type" asOf={range.end} />
+                  <AllocationChart state={state} groupBy="provider" title="Allocation by provider" asOf={range.end} />
+                  <AllocationChart state={state} groupBy="owner" title="Allocation by owner" asOf={range.end} />
                 </div>
-                <StatsPanel state={state} />
+                <StatsPanel state={state} range={range} />
               </div>
             )}
             {tab === "Update" && <BulkUpdateForm state={state} run={run} />}

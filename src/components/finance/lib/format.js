@@ -40,6 +40,15 @@ export function todayString() {
   return `${now.getFullYear()}-${month}-${day}`;
 }
 
+/** One year before today, local YYYY-MM-DD (default dashboard range start). */
+export function yearAgoString() {
+  const now = new Date();
+  now.setFullYear(now.getFullYear() - 1);
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${now.getFullYear()}-${month}-${day}`;
+}
+
 // Fixed palette, legible on the site's dark background. First entry = designColor.
 const PALETTE = [
   "#5d7bff", "#4fc3f7", "#4ade80", "#facc15", "#fb923c",

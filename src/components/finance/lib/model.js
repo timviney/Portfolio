@@ -8,14 +8,63 @@ export const activeAccounts = (state) => state.accounts.filter((account) => !acc
 /**
  * Latest snapshot per account: max date; same-date ties go to the later array entry.
  * Scanning in array order with `>=` implements exactly that. Returns Map(accountId -> snapshot).
+ * Pass asOf (YYYY-MM-DD) to ignore snapshots after that date.
  */
-export function latestByAccount(state) {
+export function latestByAccount(state, asOf = null) {
   const latest = new Map();
   for (const snapshot of state.snapshots) {
+    if (asOf && snapshot.date > asOf) continue;
     const best = latest.get(snapshot.accountId);
     if (!best || snapshot.date >= best.date) latest.set(snapshot.accountId, snapshot);
   }
   return latest;
+}
+
+/**
+ * Restricts a dated series to [start, end]. A synthetic first point at `start`
+ * carries forward the last known values before the range, so charts begin at the
+ * range edge (carry-forward only — if nothing exists before start, the series
+ * simply begins at the first point inside the range).
+ */
+export function seriesInRange(series, start, end) {
+  let before = null;
+  const inside = [];
+  for (const point of series) {
+    if (point.date < start) before = point;
+    else if (point.date <= end) inside.push(point);
+  }
+  if (inside.length > 0 && inside[0].date === start) return inside;
+  return before ? [{ ...before, date: start }, ...inside] : inside;
+}
+
+/**
+ * Per-type balance series over the union of all snapshot dates (for the stacked
+ * area chart). Returns [{ date, [type]: balance|null }]: a type is null until the
+ * first snapshot of any account of that type, then the carried sum of its balances.
+ */
+export function balanceSeriesByType(state) {
+  if (state.snapshots.length === 0) return [];
+  const types = [...new Set(state.accounts.map((account) => account.type || "Unknown"))];
+  const dates = [...new Set(state.snapshots.map((snapshot) => snapshot.date))].sort();
+  const histories = new Map(state.accounts.map((account) => [account.id, accountHistory(state, account.id)]));
+  const cursors = new Map(state.accounts.map((account) => [account.id, 0]));
+
+  return dates.map((date) => {
+    const point = { date };
+    const sums = new Map();
+    for (const account of state.accounts) {
+      const history = histories.get(account.id);
+      let cursor = cursors.get(account.id);
+      while (cursor < history.length && history[cursor].date <= date) cursor++;
+      cursors.set(account.id, cursor);
+      if (cursor > 0) {
+        const type = account.type || "Unknown";
+        sums.set(type, (sums.get(type) ?? 0) + history[cursor - 1].balance);
+      }
+    }
+    for (const type of types) point[type] = sums.get(type) ?? null;
+    return point;
+  });
 }
 
 /** Snapshots of one account, date-ascending; same-date snapshots keep array order (stable sort). */
@@ -75,14 +124,15 @@ export function balanceSeriesByAccount(state, accounts = state.accounts) {
 }
 
 /**
- * Summary card totals over ACTIVE accounts' latest balances.
+ * Summary card totals over ACTIVE accounts' latest balances (pass asOf to value
+ * them at a past date).
  * Savings = type in config.savingsTypes; investments = everything else; ISA = type in
  * config.isaTypes; GIA = the literal "GIA" type; taxable = type in config.taxableTypes.
  * Savings/investments and taxable/tax-free are independent axes (a GIA is a taxable
  * investment, a Cash ISA is tax-free savings).
  */
-export function summaryTotals(state) {
-  const latest = latestByAccount(state);
+export function summaryTotals(state, asOf = null) {
+  const latest = latestByAccount(state, asOf);
   const totals = { total: 0, savings: 0, isa: 0, gia: 0, taxable: 0 };
   for (const account of activeAccounts(state)) {
     const balance = latest.get(account.id)?.balance ?? 0;
@@ -100,12 +150,12 @@ export function summaryTotals(state) {
 }
 
 /**
- * Allocation of ACTIVE accounts' latest balances.
+ * Allocation of ACTIVE accounts' latest balances (pass asOf for a past date).
  * groupBy: "account" | "type" | "provider" | "owner".
  * Returns [{ name, value, colour }] (zero-value slices dropped), value descending.
  */
-export function allocationBy(state, groupBy) {
-  const latest = latestByAccount(state);
+export function allocationBy(state, groupBy, asOf = null) {
+  const latest = latestByAccount(state, asOf);
   const groups = new Map();
   for (const account of activeAccounts(state)) {
     const balance = latest.get(account.id)?.balance ?? 0;

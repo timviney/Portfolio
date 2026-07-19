@@ -3,16 +3,16 @@ import { portfolioSeries } from "../lib/model";
 import {
   growthOverPeriod,
   flowTotals,
-  twrApproximation,
+  twrOverRange,
   growthByAccount,
   growthByType,
 } from "../lib/analytics";
 import { formatDate, gbp, pct } from "../lib/format";
 import ChartCard, { NoData } from "./ChartCard";
 
-// Stats panel: the design doc's Analytics v1 list over the whole recorded history
-// (first snapshot date -> latest). Growth/pct/TWR come from lib/analytics; this
-// component only formats them. Allocation percentages live in the pies, not here.
+// Stats panel: the design doc's Analytics v1 list over the dashboard's selected
+// date range. Growth/pct/TWR come from lib/analytics; this component only formats
+// them. Allocation percentages live in the pies, not here.
 
 const TWR_FOOTNOTE =
   "Time-weighted return is a Modified-Dietz-style approximation: flows are treated as landing exactly on snapshot dates, so it's only as accurate as the snapshot data allows. Growth percentages use a simple approximation that ignores the timing of flows within the period.";
@@ -59,7 +59,7 @@ function GrowthTable({ rows, nameKey }) {
   );
 }
 
-function StatsPanel({ state }) {
+function StatsPanel({ state, range }) {
   const series = portfolioSeries(state);
 
   if (series.length === 0) {
@@ -70,11 +70,10 @@ function StatsPanel({ state }) {
     );
   }
 
-  const start = series[0].date;
-  const end = series[series.length - 1].date;
+  const { start, end } = range;
   const period = growthOverPeriod(state, start, end);
-  const flows = flowTotals(state);
-  const twr = twrApproximation(state);
+  const flows = flowTotals(state, start, end);
+  const twr = twrOverRange(state, start, end);
   const byAccount = growthByAccount(state, start, end).map((row) => ({
     ...row,
     name: row.account.name,

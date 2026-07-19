@@ -25,11 +25,16 @@ export function totalNetContributions(state) {
   return net;
 }
 
-/** All-time flow totals: { contributions, withdrawals, net } across all accounts. */
-export function flowTotals(state) {
+/**
+ * Flow totals: { contributions, withdrawals, net }. With start/end, only snapshots
+ * in (start, end] count (same window semantics as netContributions).
+ */
+export function flowTotals(state, start = null, end = null) {
   let contributions = 0;
   let withdrawals = 0;
   for (const snapshot of state.snapshots) {
+    if (start !== null && snapshot.date <= start) continue;
+    if (end !== null && snapshot.date > end) continue;
     contributions += snapshot.contribution;
     withdrawals += snapshot.withdrawal;
   }
@@ -101,6 +106,44 @@ export function twrApproximation(state) {
     any = true;
   }
   return any ? twr - 1 : null;
+}
+
+/**
+ * Cumulative TWR at every portfolio-series point: [{ date, twr }], twr expressed
+ * as a ratio (0.12 = 12%). Starts at 0 on the first date (the baseline); periods
+ * with V_{i−1} = 0 are skipped (no base), leaving the cumulative value unchanged.
+ * Same Modified-Dietz-style approximation as twrApproximation.
+ */
+export function twrSeries(state) {
+  const series = portfolioSeries(state);
+  if (series.length === 0) return [];
+  const out = [{ date: series[0].date, twr: 0 }];
+  let twr = 1;
+  for (let i = 1; i < series.length; i++) {
+    const previous = series[i - 1].value;
+    if (previous > 0) {
+      const flows = netContributions(state, series[i - 1].date, series[i].date);
+      twr *= 1 + (series[i].value - previous - flows) / previous;
+    }
+    out.push({ date: series[i].date, twr: twr - 1 });
+  }
+  return out;
+}
+
+/**
+ * TWR over [start, end] by chaining the cumulative series:
+ * (1 + T_end) / (1 + T_start) − 1. T_start is the last cumulative value ≤ start
+ * (0 if the range starts before the first snapshot). Null when no data exists ≤ end.
+ */
+export function twrOverRange(state, start, end) {
+  let atStart = 0;
+  let atEnd = null;
+  for (const point of twrSeries(state)) {
+    if (point.date <= start) atStart = point.twr;
+    if (point.date <= end) atEnd = point.twr;
+    else break;
+  }
+  return atEnd === null ? null : (1 + atEnd) / (1 + atStart) - 1;
 }
 
 /**

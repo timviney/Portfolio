@@ -5,10 +5,11 @@ import { gbp, pct } from "../lib/format";
 import ChartCard, { NoData, chartTooltipStyle } from "./ChartCard";
 
 // One reusable allocation pie. groupBy: "account" | "type" | "provider" | "owner".
+// Allocations are valued as of the dashboard range's end date.
 // Rendered four times on the dashboard with different groupings.
 
-function AllocationChart({ state, groupBy, title }) {
-  const slices = allocationBy(state, groupBy);
+function AllocationChart({ state, groupBy, title, asOf }) {
+  const slices = allocationBy(state, groupBy, asOf);
   const total = slices.reduce((sum, slice) => sum + slice.value, 0);
 
   return (

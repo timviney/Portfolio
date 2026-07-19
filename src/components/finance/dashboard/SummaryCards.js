@@ -15,8 +15,8 @@ const CARDS = [
   ["Tax-free", "taxFree"],
 ];
 
-function SummaryCards({ state }) {
-  const totals = summaryTotals(state);
+function SummaryCards({ state, asOf }) {
+  const totals = summaryTotals(state, asOf);
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
       {CARDS.map(([label, key]) => (
