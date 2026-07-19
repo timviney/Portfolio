@@ -155,7 +155,8 @@ src/components/finance/
 - **Accounts**: AccountList + AccountForm. Expanding a row shows notes/details and the snapshot history table with edit/delete (typo-fixing only).
 - **ISA**: IsaPanel — per-owner cards/table for the selected tax year: contributions, withdrawals, net, remaining allowance; tax year selector; small editor to add/edit tax years (config lives here because ISA tracking is its only consumer).
 - **File**: FilePanel — New document, Open file (validate → unsaved-changes guard → apply), Save (downloads `finance-YYYY-MM-DD.json`). Opening or creating a document with unsaved changes prompts Save & continue / Discard / Cancel.
-- **Empty state** (no accounts): friendly prompt with "Open file…" and "Create your first account" buttons, shown instead of tabs content.
+- **Start screen** (no document open): the app always opens here — the user must choose "Open file…" or "New document" before any tabs appear. There is no implicit empty document.
+- **Empty state** (document open, no accounts): friendly prompt with "Open file…" and "Create your first account" buttons, shown instead of tabs content.
 - Account/owner/type grouping colours: `account.colour` where applicable; otherwise assign from a fixed palette by index (`format.js`).
 
 ---
@@ -175,6 +176,7 @@ src/components/finance/
 - [x] **9. Account management** — `entry/AccountList.js` + `entry/AccountForm.js`: create/edit/archive, inline new owner/type, expandable row with snapshot history (edit/delete).
 - [x] **10. Import/Export** — `data/ImportExport.js` with validation errors surfaced readably and a confirm-before-replace dialog. (Superseded by 10b the same day.)
 - [x] **10b. File-editor persistence rework** — user decision: the app behaves like a document editor, not an auto-saving app. New empty document on every visit; no localStorage; `lib/file.js` (`saveFile`/`openFile`), `data/FilePanel.js` (New/Open/Save); dirty tracking (`state !== savedDoc`), unsaved-changes confirm (Save & continue / Discard / Cancel) and `beforeunload` warning in `FinanceDashboard.js`; Data tab renamed File; download renamed `finance-YYYY-MM-DD.json`.
+- [x] **10c. Start screen** — no implicit empty document: `FinanceDashboard` state starts as `null` and the app renders a start screen (Open file… / New document) until the user picks one. Tabs only appear once a document exists.
 - [ ] **11. Summary cards + portfolio chart** — `SummaryCards.js`, `PortfolioValueChart.js`.
 - [ ] **12. Remaining charts** — `AccountBalancesChart.js`, `AllocationChart.js` × 4.
 - [ ] **13. Stats panel** — `StatsPanel.js` covering the design doc's Analytics v1 list (with TWR footnote).
@@ -262,3 +264,10 @@ Append one entry per step taken. Format: `### YYYY-MM-DD — <step/action>` then
 - `replaceAll` in actions.js is no longer called by the UI (applyDocument sets state directly); kept as part of the planned actions API.
 - `npm run build` compiled successfully (clean, no warnings).
 - Not yet manually verified in the browser (beforeunload prompt, guard dialog) — folded into step 16's end-to-end check.
+
+
+### 2026-07-19 — Step 10c (start screen)
+- User decision: no implicit empty document — on entry the app must make the user choose Open or New before anything else.
+- `FinanceDashboard.js`: `state` now starts as `null` and the component returns a start screen (Open file… / New document, validation errors inline) until a document exists; tabs only render afterwards. The file-picker input and open handler are shared between the start screen and the no-accounts empty state. `dirty` is false while no document is open, so the start screen never triggers the beforeunload warning.
+- Plan updated: new Start screen bullet in the UI design section, step 10c added and ticked.
+- `npm run build` compiled successfully.
