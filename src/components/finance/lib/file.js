@@ -60,3 +60,23 @@ export async function openFile(file) {
   }
   return normalize(parsed);
 }
+
+/**
+ * Fetches the bundled example document, validates it, and returns the normalized
+ * document. Throws an Error with a readable message on failure.
+ */
+export async function openExample() {
+  let parsed;
+  try {
+    const response = await fetch("/finance/example.json");
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    parsed = await response.json();
+  } catch (e) {
+    throw new Error(`Could not load the example file: ${e.message}`);
+  }
+  const { ok, errors } = validate(parsed);
+  if (!ok) {
+    throw new Error(`Invalid example data:\n${errors.join("\n")}`);
+  }
+  return normalize(parsed);
+}

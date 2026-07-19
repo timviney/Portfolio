@@ -379,3 +379,18 @@ Append one entry per step taken. Format: `### YYYY-MM-DD — <step/action>` then
 - `dashboard/AccountTwrChart.js` and `dashboard/ProviderTwrChart.js`: added explicit `legendPayload` in account/provider JSON order so Recharts cannot reorder the legend.
 - `dashboard/AccountBalancesChart.js` and `dashboard/AccountTypeChart.js`: legend payload is now forward JSON order (no longer reversed). To keep the visual stack aligned with the legend, the `<Area>` children are rendered in reverse JSON order so the first account/type sits at the top of the stack — both legend and stack now read top-to-bottom in JSON order.
 - `npm run build` compiled successfully.
+
+### 2026-07-19 — Example file + Open example button
+- User request: randomise the numbers in `public/finance/example.json` and add an "Open example" option on the entry page that loads it as a file.
+- Regenerated `public/finance/example.json` from scratch with sensible randomised data: 7 accounts, 82 snapshots, varied contribution/withdrawal patterns and per-asset-class growth rates, balances rounded to 2dp and kept non-negative.
+- `lib/file.js`: added `openExample()` which fetches `/finance/example.json`, validates it via `schema.js`, and normalizes it.
+- `FinanceDashboard.js`: added `handleOpenExampleFile` and an "Open example" button on both the start screen and the no-accounts empty state. It goes through the same `handleOpen` path (and therefore the unsaved-changes guard) as opening a real file.
+- Removed the temporary generator scripts after use.
+- `npm run build` compiled successfully.
+
+### 2026-07-19 — Shifted example data forward by 2 years
+- User request: bring all dates in `public/finance/example.json` forward by 2 years.
+- Snapshot dates shifted from 2021–2024 to 2023–2026.
+- Tax year names and start/end dates shifted accordingly (e.g. 2026/27 -> 2028/29).
+- Temporary shift script removed after use.
+- `npm run build` compiled successfully.

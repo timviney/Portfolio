@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { defaultData } from "./lib/schema";
-import { openFile, saveFile } from "./lib/file";
+import { openFile, openExample, saveFile } from "./lib/file";
 import BulkUpdateForm from "./entry/BulkUpdateForm";
 import AccountList from "./entry/AccountList";
 import FilePanel from "./data/FilePanel";
@@ -90,6 +90,15 @@ function FinanceDashboard() {
     }
   };
 
+  const handleOpenExampleFile = async () => {
+    try {
+      handleOpen(await openExample());
+      setOpenError(null);
+    } catch (e) {
+      setOpenError(e.message);
+    }
+  };
+
   const filePicker = (
     <input
       ref={fileInputRef}
@@ -125,7 +134,7 @@ function FinanceDashboard() {
                 {openError}
               </pre>
             )}
-            <div className="flex justify-center gap-4">
+            <div className="flex flex-wrap justify-center gap-4">
               <button
                 className="px-6 py-2 rounded-lg bg-designColor text-bodyColor font-titleFont hover:opacity-80 transition-opacity duration-300"
                 onClick={() => fileInputRef.current?.click()}
@@ -137,6 +146,12 @@ function FinanceDashboard() {
                 onClick={handleNew}
               >
                 New document
+              </button>
+              <button
+                className="px-6 py-2 rounded-lg border border-gray-600 text-lightText font-titleFont hover:border-designColor hover:text-designColor transition-colors duration-300"
+                onClick={handleOpenExampleFile}
+              >
+                Open example
               </button>
             </div>
           </div>
@@ -201,7 +216,7 @@ function FinanceDashboard() {
                 {openError}
               </pre>
             )}
-            <div className="flex justify-center gap-4">
+            <div className="flex flex-wrap justify-center gap-4">
               <button
                 className="px-6 py-2 rounded-lg border border-designColor text-designColor font-titleFont hover:bg-designColor hover:text-bodyColor transition-colors duration-300"
                 onClick={() => fileInputRef.current?.click()}
@@ -213,6 +228,12 @@ function FinanceDashboard() {
                 onClick={() => setTab("Accounts")}
               >
                 Create your first account
+              </button>
+              <button
+                className="px-6 py-2 rounded-lg border border-gray-600 text-lightText font-titleFont hover:border-designColor hover:text-designColor transition-colors duration-300"
+                onClick={handleOpenExampleFile}
+              >
+                Open example
               </button>
             </div>
           </div>

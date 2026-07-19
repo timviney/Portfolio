@@ -1,0 +1,893 @@
+{
+  "version": 1,
+  "config": {
+    "owners": [
+      "Bob",
+      "Alice"
+    ],
+    "accountTypes": [
+      "Savings Account",
+      "Cash ISA",
+      "Stocks & Shares ISA",
+      "GIA",
+      "Premium Bonds",
+      "Other"
+    ],
+    "isaTypes": [
+      "Cash ISA",
+      "Stocks & Shares ISA"
+    ],
+    "savingsTypes": [
+      "Savings Account",
+      "Cash ISA",
+      "Premium Bonds"
+    ],
+    "taxableTypes": [
+      "Savings Account",
+      "GIA"
+    ],
+    "taxYears": [
+      {
+        "name": "2028/29",
+        "start": "2028-04-06",
+        "end": "2029-04-05",
+        "isaAllowance": 20000
+      },
+      {
+        "name": "2027/28",
+        "start": "2027-04-06",
+        "end": "2028-04-05",
+        "isaAllowance": 20000
+      },
+      {
+        "name": "2026/27",
+        "start": "2026-04-06",
+        "end": "2027-04-05",
+        "isaAllowance": 20000
+      },
+      {
+        "name": "2025/26",
+        "start": "2025-04-06",
+        "end": "2026-04-05",
+        "isaAllowance": 20000
+      },
+      {
+        "name": "2024/25",
+        "start": "2024-04-06",
+        "end": "2025-04-05",
+        "isaAllowance": 20000
+      },
+      {
+        "name": "2023/24",
+        "start": "2023-04-06",
+        "end": "2024-04-05",
+        "isaAllowance": 20000
+      },
+      {
+        "name": "2022/23",
+        "start": "2022-04-06",
+        "end": "2023-04-05",
+        "isaAllowance": 20000
+      }
+    ]
+  },
+  "accounts": [
+    {
+      "id": "966c816b-dcfb-4376-8766-66a79ac91cca",
+      "name": "My Nutmeg Pot",
+      "provider": "Nutmeg",
+      "owner": "Bob",
+      "type": "Stocks & Shares ISA",
+      "colour": "#62ab5d",
+      "currency": "GBP",
+      "archived": false,
+      "notes": ""
+    },
+    {
+      "id": "efa771d9-4b95-4128-a55b-1a2074fd7de0",
+      "name": "Taxed Pot",
+      "provider": "Nutmeg",
+      "owner": "Alice",
+      "type": "GIA",
+      "colour": "#109e33",
+      "currency": "GBP",
+      "archived": false,
+      "notes": ""
+    },
+    {
+      "id": "034236ca-8728-45d4-901a-9f663600ab7c",
+      "name": "ISA",
+      "provider": "Vanguard",
+      "owner": "Alice",
+      "type": "Stocks & Shares ISA",
+      "colour": "#a4232e",
+      "currency": "GBP",
+      "archived": false,
+      "notes": ""
+    },
+    {
+      "id": "bdf00d21-5b45-49ea-9e19-06b469b5f4ef",
+      "name": "Taxed Pot",
+      "provider": "Vanguard",
+      "owner": "Bob",
+      "type": "GIA",
+      "colour": "#fb1313",
+      "currency": "GBP",
+      "archived": false,
+      "notes": ""
+    },
+    {
+      "id": "a6e8027b-fd2c-4acc-9dc0-731737bfb127",
+      "name": "Premium Bonds",
+      "provider": "NS&I",
+      "owner": "Bob",
+      "type": "Premium Bonds",
+      "colour": "#e2b545",
+      "currency": "GBP",
+      "archived": false,
+      "notes": ""
+    },
+    {
+      "id": "f2165ca3-badc-40af-935f-68e5f08b7640",
+      "name": "Aggressive",
+      "provider": "Prudential",
+      "owner": "Bob",
+      "type": "GIA",
+      "colour": "#f472b6",
+      "currency": "GBP",
+      "archived": false,
+      "notes": ""
+    },
+    {
+      "id": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "name": "Current Account",
+      "provider": "Natwest",
+      "owner": "Bob",
+      "type": "Savings Account",
+      "colour": "#fb8989",
+      "currency": "GBP",
+      "archived": false,
+      "notes": ""
+    }
+  ],
+  "snapshots": [
+    {
+      "id": "79f49d05-b188-4621-b839-572644208610",
+      "accountId": "966c816b-dcfb-4376-8766-66a79ac91cca",
+      "date": "2023-01-02",
+      "balance": 10557.71,
+      "contribution": 10557.71,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "13d54577-140d-4ab3-8e87-d5ae85074a5f",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2023-01-09",
+      "balance": 10058.85,
+      "contribution": 10058.85,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "4d08d275-6a88-4062-9d1c-0c0b72ec4aa7",
+      "accountId": "f2165ca3-badc-40af-935f-68e5f08b7640",
+      "date": "2023-01-13",
+      "balance": 17459.69,
+      "contribution": 17459.69,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "58a20c6d-a729-45be-96a5-b1846897549d",
+      "accountId": "bdf00d21-5b45-49ea-9e19-06b469b5f4ef",
+      "date": "2023-01-16",
+      "balance": 20986.31,
+      "contribution": 20986.31,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "aa4c1c6a-d39f-42c4-ac14-bfdf6e09febf",
+      "accountId": "034236ca-8728-45d4-901a-9f663600ab7c",
+      "date": "2023-01-21",
+      "balance": 23145.51,
+      "contribution": 23145.51,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "2f6352d1-c241-4361-91a4-ff3ff3b98d2e",
+      "accountId": "a6e8027b-fd2c-4acc-9dc0-731737bfb127",
+      "date": "2023-02-01",
+      "balance": 28354.32,
+      "contribution": 28354.32,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "0127e0e1-c978-457c-81a6-a10f97127067",
+      "accountId": "efa771d9-4b95-4128-a55b-1a2074fd7de0",
+      "date": "2023-02-09",
+      "balance": 7317.62,
+      "contribution": 7317.62,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "061615c0-62b9-47d4-9c30-dcce2977d477",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2023-03-09",
+      "balance": 10133.19,
+      "contribution": 0,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "84d03589-0c4e-4f0f-855a-d70c939817fa",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2023-04-09",
+      "balance": 8348.27,
+      "contribution": 2086.44,
+      "withdrawal": 4003.98,
+      "notes": ""
+    },
+    {
+      "id": "4d5faa42-ff30-41a8-a36f-c418dad06b1d",
+      "accountId": "034236ca-8728-45d4-901a-9f663600ab7c",
+      "date": "2023-04-21",
+      "balance": 26642.35,
+      "contribution": 3186.9,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "cf86c746-b841-4723-98a4-d29a80912dc9",
+      "accountId": "f2165ca3-badc-40af-935f-68e5f08b7640",
+      "date": "2023-05-13",
+      "balance": 20102.77,
+      "contribution": 3265.64,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "ce1816a9-4885-4948-8e7a-3989ea6bb63c",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2023-07-09",
+      "balance": 8588.93,
+      "contribution": 2634.21,
+      "withdrawal": 2551.87,
+      "notes": ""
+    },
+    {
+      "id": "d79adf86-e7af-4910-b2d3-f20d8f08edf0",
+      "accountId": "f2165ca3-badc-40af-935f-68e5f08b7640",
+      "date": "2023-07-13",
+      "balance": 22961.65,
+      "contribution": 4584.05,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "2d4672b8-6342-40f6-bde0-949426740467",
+      "accountId": "966c816b-dcfb-4376-8766-66a79ac91cca",
+      "date": "2023-08-02",
+      "balance": 15250.24,
+      "contribution": 3892.84,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "7598c7aa-e9e7-4c01-9b52-092957b60ca1",
+      "accountId": "efa771d9-4b95-4128-a55b-1a2074fd7de0",
+      "date": "2023-08-09",
+      "balance": 10460.1,
+      "contribution": 4818.29,
+      "withdrawal": 1439.17,
+      "notes": ""
+    },
+    {
+      "id": "508a677b-42c6-4ae5-81a5-421ab4cc9c39",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2023-08-09",
+      "balance": 11403.7,
+      "contribution": 2779.43,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "38a2b935-38ca-4d33-9c92-35cfcccfd7cf",
+      "accountId": "bdf00d21-5b45-49ea-9e19-06b469b5f4ef",
+      "date": "2023-08-16",
+      "balance": 15308.14,
+      "contribution": 0,
+      "withdrawal": 4593.67,
+      "notes": ""
+    },
+    {
+      "id": "f76e36d5-9084-4794-9270-7e7dfda81f7f",
+      "accountId": "034236ca-8728-45d4-901a-9f663600ab7c",
+      "date": "2023-08-21",
+      "balance": 33020.29,
+      "contribution": 4234.97,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "dcf343c9-ed4c-40fd-9bad-5c9751c9172b",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2023-10-09",
+      "balance": 10635.95,
+      "contribution": 2435.22,
+      "withdrawal": 3258.83,
+      "notes": ""
+    },
+    {
+      "id": "490edd53-3de3-4e10-a426-9c65fc974596",
+      "accountId": "f2165ca3-badc-40af-935f-68e5f08b7640",
+      "date": "2023-11-13",
+      "balance": 25378.9,
+      "contribution": 0,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "ad6efddd-c914-4e34-9f8a-579c19f9376e",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2023-12-09",
+      "balance": 10560.38,
+      "contribution": 2816.32,
+      "withdrawal": 3064.2,
+      "notes": ""
+    },
+    {
+      "id": "8370d3c0-7bfc-4c87-8f7f-024227c29e50",
+      "accountId": "034236ca-8728-45d4-901a-9f663600ab7c",
+      "date": "2023-12-21",
+      "balance": 31827.07,
+      "contribution": 0,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "a1825944-b8bb-46ff-a675-e8c215241e51",
+      "accountId": "a6e8027b-fd2c-4acc-9dc0-731737bfb127",
+      "date": "2024-01-01",
+      "balance": 41289.47,
+      "contribution": 12233.53,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "e9d80413-7961-4305-a720-0b49870bd252",
+      "accountId": "efa771d9-4b95-4128-a55b-1a2074fd7de0",
+      "date": "2024-01-09",
+      "balance": 10418.52,
+      "contribution": 0,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "a2e73927-a647-4cb5-aa73-48e0a76ce931",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2024-01-09",
+      "balance": 13171.27,
+      "contribution": 2542.24,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "3b51ec7e-1e24-4518-a006-535d2d5ab3b7",
+      "accountId": "f2165ca3-badc-40af-935f-68e5f08b7640",
+      "date": "2024-01-13",
+      "balance": 28841.82,
+      "contribution": 3456.92,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "1c62a190-6a59-4e1b-acc6-8371961cee1c",
+      "accountId": "966c816b-dcfb-4376-8766-66a79ac91cca",
+      "date": "2024-03-02",
+      "balance": 18198.41,
+      "contribution": 4687.69,
+      "withdrawal": 2115.07,
+      "notes": ""
+    },
+    {
+      "id": "5a95af46-43c7-4ad6-927c-229e66f08737",
+      "accountId": "f2165ca3-badc-40af-935f-68e5f08b7640",
+      "date": "2024-03-13",
+      "balance": 34096.73,
+      "contribution": 2006.47,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "761bc000-44bd-4fdd-9725-6c07f86a918e",
+      "accountId": "bdf00d21-5b45-49ea-9e19-06b469b5f4ef",
+      "date": "2024-03-16",
+      "balance": 12228.88,
+      "contribution": 0,
+      "withdrawal": 3434.99,
+      "notes": ""
+    },
+    {
+      "id": "24cc779a-8066-4893-99df-45245c3218c0",
+      "accountId": "034236ca-8728-45d4-901a-9f663600ab7c",
+      "date": "2024-03-21",
+      "balance": 33260.69,
+      "contribution": 2272.73,
+      "withdrawal": 2286.28,
+      "notes": ""
+    },
+    {
+      "id": "b4d55631-6cc5-400d-b3ac-4d68822c6e8f",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2024-04-09",
+      "balance": 15617.47,
+      "contribution": 2411.33,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "43cc3b48-f62e-40d5-be78-8d7471a24d66",
+      "accountId": "f2165ca3-badc-40af-935f-68e5f08b7640",
+      "date": "2024-06-13",
+      "balance": 41114.35,
+      "contribution": 4089.77,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "8c60a454-b5cd-4318-ab68-6e996d093c22",
+      "accountId": "efa771d9-4b95-4128-a55b-1a2074fd7de0",
+      "date": "2024-07-09",
+      "balance": 13349.12,
+      "contribution": 3459.33,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "ec8157e6-9a4c-409e-8186-4d9fb2fdba04",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2024-07-09",
+      "balance": 15878.16,
+      "contribution": 0,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "1f1f0bf9-8a24-4549-9b66-58ff20be92c2",
+      "accountId": "966c816b-dcfb-4376-8766-66a79ac91cca",
+      "date": "2024-08-02",
+      "balance": 24156.43,
+      "contribution": 5864.08,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "b1669e50-6398-4478-b648-5cce3962a3be",
+      "accountId": "034236ca-8728-45d4-901a-9f663600ab7c",
+      "date": "2024-08-21",
+      "balance": 39677.92,
+      "contribution": 2190.58,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "ea8bdb73-986e-4a50-8210-0a0485405b5d",
+      "accountId": "bdf00d21-5b45-49ea-9e19-06b469b5f4ef",
+      "date": "2024-09-16",
+      "balance": 20193.64,
+      "contribution": 6032.97,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "73d73b55-c903-4052-af36-7e4e2b3ea5d5",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2024-10-09",
+      "balance": 15062.32,
+      "contribution": 1859.57,
+      "withdrawal": 2951.35,
+      "notes": ""
+    },
+    {
+      "id": "569605d3-5b9d-407c-b38f-848a3807e998",
+      "accountId": "f2165ca3-badc-40af-935f-68e5f08b7640",
+      "date": "2024-10-13",
+      "balance": 48535.47,
+      "contribution": 2464.39,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "87cc8ad6-af3e-4ab2-acaa-4a99ca7967ac",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2024-11-09",
+      "balance": 12834.78,
+      "contribution": 0,
+      "withdrawal": 2253.87,
+      "notes": ""
+    },
+    {
+      "id": "66e44be3-e767-417f-ac83-e6f178791bc5",
+      "accountId": "a6e8027b-fd2c-4acc-9dc0-731737bfb127",
+      "date": "2024-12-01",
+      "balance": 41525.33,
+      "contribution": 0,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "53712af7-1b74-4351-b009-98b8ce419e34",
+      "accountId": "efa771d9-4b95-4128-a55b-1a2074fd7de0",
+      "date": "2025-01-09",
+      "balance": 14712.11,
+      "contribution": 4734.19,
+      "withdrawal": 3755.58,
+      "notes": ""
+    },
+    {
+      "id": "b8074370-b2bb-4e4f-9978-2300e7b1da64",
+      "accountId": "034236ca-8728-45d4-901a-9f663600ab7c",
+      "date": "2025-01-21",
+      "balance": 45766.96,
+      "contribution": 3659.68,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "1c45b164-dd8d-4c74-9f69-66450b9df68a",
+      "accountId": "966c816b-dcfb-4376-8766-66a79ac91cca",
+      "date": "2025-02-02",
+      "balance": 23750.16,
+      "contribution": 6237.72,
+      "withdrawal": 7980.47,
+      "notes": ""
+    },
+    {
+      "id": "f05a54f2-00bf-4af8-8a66-f58459bba9bb",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2025-02-09",
+      "balance": 12994.1,
+      "contribution": 0,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "be4fd2c8-c3fc-445c-8b6d-ff8294844d3a",
+      "accountId": "f2165ca3-badc-40af-935f-68e5f08b7640",
+      "date": "2025-02-13",
+      "balance": 47169.5,
+      "contribution": 2182.87,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "15ac50e2-9db8-4f59-ac4d-6c4350543c4f",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2025-03-09",
+      "balance": 11492.95,
+      "contribution": 0,
+      "withdrawal": 1682.12,
+      "notes": ""
+    },
+    {
+      "id": "d6c647b6-ddc6-4804-b0de-e0dec13fe0ea",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2025-04-09",
+      "balance": 7895.51,
+      "contribution": 0,
+      "withdrawal": 3649.55,
+      "notes": ""
+    },
+    {
+      "id": "96f8b090-13e8-44bf-be86-b14818d8f778",
+      "accountId": "bdf00d21-5b45-49ea-9e19-06b469b5f4ef",
+      "date": "2025-04-16",
+      "balance": 28212.36,
+      "contribution": 6564.74,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "1d7689c5-cbc7-4d28-a207-c7d1dba6b1c6",
+      "accountId": "034236ca-8728-45d4-901a-9f663600ab7c",
+      "date": "2025-04-21",
+      "balance": 51757.51,
+      "contribution": 3610.91,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "1f67e124-1ae7-4a0a-a6d9-5e012c703795",
+      "accountId": "f2165ca3-badc-40af-935f-68e5f08b7640",
+      "date": "2025-05-13",
+      "balance": 57529.22,
+      "contribution": 4558.16,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "4d5d5e8e-0659-4c5b-8422-e27e86546d49",
+      "accountId": "efa771d9-4b95-4128-a55b-1a2074fd7de0",
+      "date": "2025-06-09",
+      "balance": 19104.97,
+      "contribution": 3517.82,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "018ab0a4-4fa7-4817-9db9-e9ef4ad3f328",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2025-06-09",
+      "balance": 8023.54,
+      "contribution": 0,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "7988c6eb-fdb7-4ad0-a1db-9fa921884b8f",
+      "accountId": "f2165ca3-badc-40af-935f-68e5f08b7640",
+      "date": "2025-07-13",
+      "balance": 60116.38,
+      "contribution": 0,
+      "withdrawal": 2495.93,
+      "notes": ""
+    },
+    {
+      "id": "00894973-01c3-410e-8331-ac28b6fab17f",
+      "accountId": "034236ca-8728-45d4-901a-9f663600ab7c",
+      "date": "2025-07-21",
+      "balance": 41498.4,
+      "contribution": 2474.47,
+      "withdrawal": 15227.38,
+      "notes": ""
+    },
+    {
+      "id": "447cf5cc-421b-4280-a28f-c157b2824ce3",
+      "accountId": "966c816b-dcfb-4376-8766-66a79ac91cca",
+      "date": "2025-08-02",
+      "balance": 25966.94,
+      "contribution": 3861.26,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "167349a9-9b9d-4313-9074-f726168abb23",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2025-08-09",
+      "balance": 10434.17,
+      "contribution": 2402.56,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "d9ed4e57-e7e8-4e47-bb17-22f072fac51c",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2025-10-09",
+      "balance": 13147.1,
+      "contribution": 2633.17,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "d4230710-b56c-4492-9fef-ac290b4c6100",
+      "accountId": "f2165ca3-badc-40af-935f-68e5f08b7640",
+      "date": "2025-10-13",
+      "balance": 67307.71,
+      "contribution": 4670.86,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "9511f048-7e57-4bd7-80b9-6895ac9a7370",
+      "accountId": "bdf00d21-5b45-49ea-9e19-06b469b5f4ef",
+      "date": "2025-10-16",
+      "balance": 30111.7,
+      "contribution": 5587.88,
+      "withdrawal": 3311.0,
+      "notes": ""
+    },
+    {
+      "id": "a0939684-32f6-475b-bb0e-2aa88a82ab96",
+      "accountId": "a6e8027b-fd2c-4acc-9dc0-731737bfb127",
+      "date": "2025-11-01",
+      "balance": 51365.84,
+      "contribution": 8542.98,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "b149e99f-8291-4bf8-9ff8-37ccec417c2d",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2025-11-09",
+      "balance": 15553.35,
+      "contribution": 2320.07,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "0821c31d-58d8-4a43-82b2-4300e22ac949",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2025-12-09",
+      "balance": 11293.52,
+      "contribution": 0,
+      "withdrawal": 4349.39,
+      "notes": ""
+    },
+    {
+      "id": "60c66dc0-69ee-44ab-9b70-f90205d3ccce",
+      "accountId": "034236ca-8728-45d4-901a-9f663600ab7c",
+      "date": "2025-12-21",
+      "balance": 39061.7,
+      "contribution": 0,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "b5d3a2c3-aa11-4256-b567-31aab93ab2ac",
+      "accountId": "efa771d9-4b95-4128-a55b-1a2074fd7de0",
+      "date": "2026-01-09",
+      "balance": 20860.56,
+      "contribution": 3297.13,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "961a992f-d03f-458d-95fc-a58546308269",
+      "accountId": "966c816b-dcfb-4376-8766-66a79ac91cca",
+      "date": "2026-02-02",
+      "balance": 34991.6,
+      "contribution": 6389.98,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "34334c0a-e4dc-4ef1-80ad-387c94f61fc3",
+      "accountId": "f2165ca3-badc-40af-935f-68e5f08b7640",
+      "date": "2026-02-13",
+      "balance": 70087.6,
+      "contribution": 3972.12,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "81273029-8601-4321-9a20-fbc05451820d",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2026-03-09",
+      "balance": 12413.23,
+      "contribution": 1055.2,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "41463314-f5a2-44a8-a31e-1889f5d167ef",
+      "accountId": "f2165ca3-badc-40af-935f-68e5f08b7640",
+      "date": "2026-05-13",
+      "balance": 74173.61,
+      "contribution": 4148.58,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "a26af14d-2c19-47c7-9e22-1de4ef54d059",
+      "accountId": "bdf00d21-5b45-49ea-9e19-06b469b5f4ef",
+      "date": "2026-05-16",
+      "balance": 25377.84,
+      "contribution": 5942.2,
+      "withdrawal": 8817.88,
+      "notes": ""
+    },
+    {
+      "id": "10ccb457-f5cf-4d92-93e5-6857e0aade06",
+      "accountId": "034236ca-8728-45d4-901a-9f663600ab7c",
+      "date": "2026-05-21",
+      "balance": 40854.03,
+      "contribution": 3916.85,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "ece6a5ce-43d6-4c1b-96c7-df96e9c7a7f2",
+      "accountId": "efa771d9-4b95-4128-a55b-1a2074fd7de0",
+      "date": "2026-06-09",
+      "balance": 19467.86,
+      "contribution": 0,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "299e479b-3241-4ca5-9b14-1c063d9c1fa4",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2026-06-09",
+      "balance": 11078.84,
+      "contribution": 0,
+      "withdrawal": 1429.85,
+      "notes": ""
+    },
+    {
+      "id": "0de6ffd1-8baa-4781-81b9-cfdf62e95b3a",
+      "accountId": "034236ca-8728-45d4-901a-9f663600ab7c",
+      "date": "2026-08-21",
+      "balance": 41579.89,
+      "contribution": 4335.88,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "e7ab0997-cd78-4bca-9cf9-24490f35456a",
+      "accountId": "966c816b-dcfb-4376-8766-66a79ac91cca",
+      "date": "2026-09-02",
+      "balance": 36018.25,
+      "contribution": 3499.3,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "22055d58-08a2-406c-b5a8-72153e5c36c9",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2026-09-09",
+      "balance": 11296.92,
+      "contribution": 0,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "02ad1f77-7472-4565-99b2-ad9900cc5c60",
+      "accountId": "f2165ca3-badc-40af-935f-68e5f08b7640",
+      "date": "2026-09-13",
+      "balance": 85854.01,
+      "contribution": 3371.67,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "69511836-0f41-43e6-be72-7f20a8a71ed0",
+      "accountId": "a6e8027b-fd2c-4acc-9dc0-731737bfb127",
+      "date": "2026-10-01",
+      "balance": 57921.37,
+      "contribution": 14841.65,
+      "withdrawal": 8869.77,
+      "notes": ""
+    },
+    {
+      "id": "8fe8e7bc-318d-4e06-bf9e-de167667a216",
+      "accountId": "ac8d50c5-e7ce-44be-9ba3-a30a75e40eb3",
+      "date": "2026-10-09",
+      "balance": 9956.39,
+      "contribution": 2153.18,
+      "withdrawal": 3494.05,
+      "notes": ""
+    },
+    {
+      "id": "47a6892f-36ae-40bf-981b-0509389f638f",
+      "accountId": "bdf00d21-5b45-49ea-9e19-06b469b5f4ef",
+      "date": "2026-10-16",
+      "balance": 23707.25,
+      "contribution": 0,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "34dd2a60-2db0-4a40-9483-05152c4c520a",
+      "accountId": "f2165ca3-badc-40af-935f-68e5f08b7640",
+      "date": "2026-11-13",
+      "balance": 84912.56,
+      "contribution": 4995.36,
+      "withdrawal": 0,
+      "notes": ""
+    },
+    {
+      "id": "51f6215e-d673-489a-94f8-566986909eab",
+      "accountId": "034236ca-8728-45d4-901a-9f663600ab7c",
+      "date": "2026-12-21",
+      "balance": 49056.43,
+      "contribution": 2335.6,
+      "withdrawal": 0,
+      "notes": ""
+    }
+  ]
+}
