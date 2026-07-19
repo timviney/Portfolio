@@ -9,7 +9,7 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import { seriesInRange } from "../lib/model";
+import { seriesInRange, providerColour } from "../lib/model";
 import { twrSeriesByProvider } from "../lib/analytics";
 import { colourFor, formatDate, pct } from "../lib/format";
 import ChartCard, { NoData, chartAxisProps, chartTooltipStyle, useHiddenSeries } from "./ChartCard";
@@ -51,7 +51,7 @@ function ProviderTwrChart({ state, range }) {
                   type="monotone"
                   dataKey={provider}
                   name={provider}
-                  stroke={colourFor(index)}
+                  stroke={providerColour(state, provider) ?? colourFor(index)}
                   strokeWidth={2}
                   dot={false}
                   activeDot={{ r: 4 }}

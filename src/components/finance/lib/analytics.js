@@ -188,6 +188,41 @@ export function twrSeriesByAccount(state) {
 }
 
 /**
+ * TWR over [start, end] for each account: chains the cumulative per-account TWR.
+ * Returns Map(accountId -> twr|null). Accounts with no snapshots in the range get
+ * null; an account that starts after `start` is chained from its first snapshot
+ * (baseline 0). Same approximation as twrOverRange.
+ */
+export function twrOverRangeByAccount(state, start, end) {
+  const series = twrSeriesByAccount(state);
+  const result = new Map();
+  for (const account of state.accounts) result.set(account.id, null);
+  if (series.length === 0) return result;
+
+  const atStart = new Map();
+  const atEnd = new Map();
+  for (const point of series) {
+    if (point.date > end) break;
+    for (const account of state.accounts) {
+      const value = point[account.id];
+      if (value !== null && value !== undefined) {
+        atEnd.set(account.id, value);
+        if (point.date <= start) atStart.set(account.id, value);
+      }
+    }
+  }
+
+  for (const account of state.accounts) {
+    const endVal = atEnd.get(account.id);
+    if (endVal !== undefined) {
+      const startVal = atStart.get(account.id) ?? 0;
+      result.set(account.id, (1 + endVal) / (1 + startVal) - 1);
+    }
+  }
+  return result;
+}
+
+/**
  * Cumulative TWR per provider over the union of all snapshot dates:
  * [{ date, [provider]: twr|null }] (twr as a ratio). Computed like the portfolio
  * TWR but restricted to each provider's accounts: V = the carried sum of their
@@ -254,11 +289,13 @@ export function twrSeriesByProvider(state) {
 /**
  * Growth over a period per account: balance(end) − balance(start) − that account's
  * net contributions in (start, end]. Includes archived accounts (their history counts).
- * Returns [{ account, startBalance, endBalance, netContributions, growth, pct }],
- * pct null when the base is 0, sorted by growth descending.
+ * Returns [{ account, startBalance, endBalance, netContributions, growth, pct, twr }],
+ * pct null when the base is 0, twr null when no snapshot exists in the range. Order
+ * matches `state.accounts`.
  */
 export function growthByAccount(state, start, end) {
-  const rows = state.accounts.map((account) => {
+  const twrByAccount = twrOverRangeByAccount(state, start, end);
+  return state.accounts.map((account) => {
     const startBalance = accountBalanceAt(state, account.id, start);
     const endBalance = accountBalanceAt(state, account.id, end);
     const net = netContributions(state, start, end, new Set([account.id]));
@@ -271,9 +308,9 @@ export function growthByAccount(state, start, end) {
       netContributions: net,
       growth,
       pct: base > 0 ? growth / base : null,
+      twr: twrByAccount.get(account.id),
     };
   });
-  return rows.sort((a, b) => b.growth - a.growth);
 }
 
 /**

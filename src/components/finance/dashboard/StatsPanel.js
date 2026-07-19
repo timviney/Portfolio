@@ -26,7 +26,7 @@ function Stat({ label, value }) {
   );
 }
 
-function GrowthTable({ rows, nameKey }) {
+function GrowthTable({ rows, nameKey, showTwr = false }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm font-bodyFont text-lightText">
@@ -34,7 +34,8 @@ function GrowthTable({ rows, nameKey }) {
           <tr className="text-left text-gray-400 border-b border-gray-600">
             <th className="py-2 pr-4 font-normal">Name</th>
             <th className="py-2 pr-4 font-normal text-right">Growth</th>
-            <th className="py-2 font-normal text-right">%</th>
+            <th className="py-2 pr-4 font-normal text-right">%</th>
+            {showTwr && <th className="py-2 font-normal text-right">TWR</th>}
           </tr>
         </thead>
         <tbody>
@@ -48,9 +49,14 @@ function GrowthTable({ rows, nameKey }) {
               >
                 {gbp(row.growth)}
               </td>
-              <td className="py-2 text-right whitespace-nowrap">
+              <td className="py-2 pr-4 text-right whitespace-nowrap">
                 {row.pct === null ? "—" : pct(row.pct)}
               </td>
+              {showTwr && (
+                <td className="py-2 text-right whitespace-nowrap">
+                  {row.twr === null ? "—" : pct(row.twr)}
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
@@ -97,7 +103,7 @@ function StatsPanel({ state, range }) {
         <div className="flex flex-col gap-6">
           <div>
             <h4 className="text-sm font-titleFont text-lightText mb-2">Growth by account</h4>
-            <GrowthTable rows={byAccount} nameKey="name" />
+            <GrowthTable rows={byAccount} nameKey="name" showTwr />
           </div>
           <div>
             <h4 className="text-sm font-titleFont text-lightText mb-2">Growth by account type</h4>

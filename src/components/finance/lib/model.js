@@ -149,10 +149,19 @@ export function summaryTotals(state, asOf = null) {
   };
 }
 
+/** Colour of the first account in the JSON belonging to a provider (company). */
+export function providerColour(state, provider) {
+  const account = state.accounts.find((account) => (account.provider || "Unknown") === provider);
+  return account?.colour;
+}
+
 /**
  * Allocation of ACTIVE accounts' latest balances (pass asOf for a past date).
  * groupBy: "account" | "type" | "provider" | "owner".
- * Returns [{ name, value, colour }] (zero-value slices dropped), value descending.
+ * Returns [{ name, value, colour }] (zero-value slices dropped). Order follows the
+ * original JSON: accounts appear in `state.accounts` order, and grouped slices
+ * appear in order of first appearance in that array. Provider (company) colour is
+ * taken from the first account for that provider.
  */
 export function allocationBy(state, groupBy, asOf = null) {
   const latest = latestByAccount(state, asOf);
@@ -161,12 +170,18 @@ export function allocationBy(state, groupBy, asOf = null) {
     const balance = latest.get(account.id)?.balance ?? 0;
     if (balance <= 0) continue;
     const name = groupBy === "account" ? accountLabel(account) : account[groupBy] || "Unknown";
-    const colour = groupBy === "account" ? account.colour : undefined;
-    const group = groups.get(name) ?? { name, value: 0, colour };
-    group.value += balance;
-    groups.set(name, group);
+    const group = groups.get(name);
+    if (group) {
+      group.value += balance;
+    } else {
+      let colour;
+      if (groupBy === "account") colour = account.colour;
+      else if (groupBy === "provider") colour = providerColour(state, name);
+      groups.set(name, { name, value: balance, colour });
+    }
   }
-  return [...groups.values()]
-    .sort((a, b) => b.value - a.value)
-    .map((group, index) => ({ ...group, colour: group.colour ?? colourFor(index) }));
+  return [...groups.values()].map((group, index) => ({
+    ...group,
+    colour: group.colour ?? colourFor(index),
+  }));
 }

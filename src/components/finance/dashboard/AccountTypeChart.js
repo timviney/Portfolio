@@ -31,6 +31,18 @@ function AccountTypeChart({ state, range }) {
     return next;
   });
 
+  // Legend top-to-bottom should match the visual stack top-to-bottom; the first
+  // rendered area sits at the bottom of the stack, so reverse the legend payload.
+  const legendPayload = types
+    .map((type, index) => ({
+      value: type,
+      dataKey: type,
+      type: "square",
+      color: colourFor(index),
+      payload: { type },
+    }))
+    .reverse();
+
   return (
     <ChartCard title="Balances by account type">
       {series.length === 0 ? (
@@ -47,7 +59,7 @@ function AccountTypeChart({ state, range }) {
                 labelFormatter={formatDate}
                 formatter={(value) => gbp(value)}
               />
-              <Legend {...legendProps} />
+              <Legend {...legendProps} payload={legendPayload} />
               {types.map((type, index) => (
                 <Area
                   key={type}

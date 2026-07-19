@@ -345,3 +345,23 @@ Append one entry per step taken. Format: `### YYYY-MM-DD — <step/action>` then
 - Applied at every place an account is identified by name alone: BulkUpdateForm rows (+ its validation error names), AccountBalancesChart and AccountTwrChart legends/tooltips, StatsPanel growth-by-account table, and `allocationBy("account")` pie slice names (in `lib/model.js` — a side benefit: two same-named accounts at different providers no longer merge into one slice).
 - Deliberately NOT applied to AccountList rows: the provider is already shown in the row's sub-line, so the suffix would duplicate it.
 - `npm run build` compiled successfully.
+
+
+### 2026-07-19 — Display ordering and provider colour fix
+- User request: display accounts and companies (providers) in the same order they appear in the original JSON, and use the first account's colour for each company.
+- `lib/model.js`: added `providerColour(state, provider)`; `allocationBy` now preserves original JSON order (removes value-desc sort) and uses the first account's colour for provider slices.
+- `lib/analytics.js`: `growthByAccount` now returns rows in `state.accounts` order instead of sorting by growth.
+- `dashboard/ProviderTwrChart.js`: provider lines now use `providerColour(state, provider)` (first account's colour) instead of the palette index.
+- `npm run build` compiled successfully.
+
+### 2026-07-19 — Per-account TWR column in Growth by account
+- User request: add TWR as an extra column in the Growth by account table.
+- `lib/analytics.js`: added `twrOverRangeByAccount(state, start, end)` (chains each account's cumulative TWR over the dashboard range); `growthByAccount` now includes `twr` in each row.
+- `dashboard/StatsPanel.js`: `GrowthTable` gained an optional `showTwr` prop; the Growth by account table renders the TWR column, while Growth by account type remains unchanged.
+- `npm run build` compiled successfully.
+
+### 2026-07-19 — Legend order matches visual stack order
+- User request: make legend order match the order charts are plotted in.
+- For stacked area charts, the first rendered `<Area>` sits at the bottom of the stack while the legend was listing series top-to-bottom in render order, so the legend order was the inverse of the visual stack order.
+- `dashboard/AccountBalancesChart.js` and `dashboard/AccountTypeChart.js` now build a reversed `legendPayload` so the legend reads top-to-bottom from the top of the stack down. Click-to-hide and dimming still work via `dataKey`.
+- `npm run build` compiled successfully.
