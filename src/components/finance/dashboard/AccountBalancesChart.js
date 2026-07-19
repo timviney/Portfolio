@@ -31,17 +31,16 @@ function AccountBalancesChart({ state, range }) {
     }
   );
 
-  // Legend top-to-bottom should match the visual stack top-to-bottom; the first
-  // rendered area sits at the bottom of the stack, so reverse the legend payload.
-  const legendPayload = accountsWithData
-    .map((account) => ({
-      value: accountLabel(account),
-      dataKey: account.id,
-      type: "square",
-      color: account.colour,
-      payload: account,
-    }))
-    .reverse();
+  // Legend and visual stack both follow the account order in the JSON. The first
+  // account is at the top of the stack, so areas are rendered in reverse order
+  // (last account at the bottom) while the legend payload stays in JSON order.
+  const legendPayload = accountsWithData.map((account) => ({
+    value: accountLabel(account),
+    dataKey: account.id,
+    type: "square",
+    color: account.colour,
+    payload: account,
+  }));
 
   return (
     <ChartCard title="Account balances">
@@ -60,19 +59,21 @@ function AccountBalancesChart({ state, range }) {
                 formatter={(value) => gbp(value)}
               />
               <Legend {...legendProps} payload={legendPayload} />
-              {accountsWithData.map((account) => (
-                <Area
-                  key={account.id}
-                  type="linear"
-                  dataKey={account.id}
-                  name={accountLabel(account)}
-                  stackId="1"
-                  stroke={account.colour}
-                  fill={account.colour}
-                  fillOpacity={0.4}
-                  hide={hidden.has(account.id)}
-                />
-              ))}
+              {accountsWithData
+                .map((account) => (
+                  <Area
+                    key={account.id}
+                    type="linear"
+                    dataKey={account.id}
+                    name={accountLabel(account)}
+                    stackId="1"
+                    stroke={account.colour}
+                    fill={account.colour}
+                    fillOpacity={0.4}
+                    hide={hidden.has(account.id)}
+                  />
+                ))
+                .reverse()}
             </AreaChart>
           </ResponsiveContainer>
         </div>

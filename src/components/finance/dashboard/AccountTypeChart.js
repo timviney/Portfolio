@@ -31,17 +31,16 @@ function AccountTypeChart({ state, range }) {
     return next;
   });
 
-  // Legend top-to-bottom should match the visual stack top-to-bottom; the first
-  // rendered area sits at the bottom of the stack, so reverse the legend payload.
-  const legendPayload = types
-    .map((type, index) => ({
-      value: type,
-      dataKey: type,
-      type: "square",
-      color: colourFor(index),
-      payload: { type },
-    }))
-    .reverse();
+  // Legend and visual stack both follow the type order of first appearance in the
+  // JSON. The first type is at the top of the stack, so areas are rendered in
+  // reverse order while the legend payload stays in JSON order.
+  const legendPayload = types.map((type, index) => ({
+    value: type,
+    dataKey: type,
+    type: "square",
+    color: colourFor(index),
+    payload: { type },
+  }));
 
   return (
     <ChartCard title="Balances by account type">
@@ -60,18 +59,20 @@ function AccountTypeChart({ state, range }) {
                 formatter={(value) => gbp(value)}
               />
               <Legend {...legendProps} payload={legendPayload} />
-              {types.map((type, index) => (
-                <Area
-                  key={type}
-                  type="linear"
-                  dataKey={type}
-                  stackId="1"
-                  stroke={colourFor(index)}
-                  fill={colourFor(index)}
-                  fillOpacity={0.4}
-                  hide={hidden.has(type)}
-                />
-              ))}
+              {types
+                .map((type, index) => (
+                  <Area
+                    key={type}
+                    type="linear"
+                    dataKey={type}
+                    stackId="1"
+                    stroke={colourFor(index)}
+                    fill={colourFor(index)}
+                    fillOpacity={0.4}
+                    hide={hidden.has(type)}
+                  />
+                ))
+                .reverse()}
             </AreaChart>
           </ResponsiveContainer>
         </div>

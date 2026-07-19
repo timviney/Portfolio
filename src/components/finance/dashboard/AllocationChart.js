@@ -12,6 +12,13 @@ function AllocationChart({ state, groupBy, title, asOf }) {
   const slices = allocationBy(state, groupBy, asOf);
   const total = slices.reduce((sum, slice) => sum + slice.value, 0);
 
+  const legendPayload = slices.map((slice) => ({
+    value: slice.name,
+    type: "square",
+    color: slice.colour,
+    payload: slice,
+  }));
+
   return (
     <ChartCard title={title}>
       {slices.length === 0 ? (
@@ -37,7 +44,7 @@ function AllocationChart({ state, groupBy, title, asOf }) {
                 contentStyle={chartTooltipStyle}
                 formatter={(value) => [`${gbp(value)} (${pct(value / total)})`, ""]}
               />
-              <Legend wrapperStyle={{ fontSize: "0.8rem", color: "#9ca3af" }} />
+              <Legend wrapperStyle={{ fontSize: "0.8rem", color: "#9ca3af" }} payload={legendPayload} />
             </PieChart>
           </ResponsiveContainer>
         </div>

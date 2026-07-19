@@ -9,20 +9,28 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import { seriesInRange } from "../lib/model";
-import { twrSeriesByAccount } from "../lib/analytics";
+import { twrSeriesByAccountOverRange } from "../lib/analytics";
 import { formatDate, pct, accountLabel } from "../lib/format";
 import ChartCard, { NoData, chartAxisProps, chartTooltipStyle, useHiddenSeries } from "./ChartCard";
 
-// Cumulative time-weighted return per account — one line per account that has at
-// least one snapshot, coloured by account.colour. Approximate — see TwrChart.
+// Time-weighted return per account over the selected dashboard range. Each line
+// is rebased to 0 at the range start so it shows return accumulated during the
+// period. Approximate — see TwrChart.
 
 function AccountTwrChart({ state, range }) {
   const { hidden, legendProps } = useHiddenSeries();
   const accountsWithData = state.accounts.filter((account) =>
     state.snapshots.some((snapshot) => snapshot.accountId === account.id)
   );
-  const series = seriesInRange(twrSeriesByAccount(state), range.start, range.end);
+  const series = twrSeriesByAccountOverRange(state, range.start, range.end);
+
+  const legendPayload = accountsWithData.map((account) => ({
+    value: accountLabel(account),
+    dataKey: account.id,
+    type: "line",
+    color: account.colour,
+    payload: account,
+  }));
 
   return (
     <ChartCard title="Time-weighted return by account">
@@ -40,7 +48,7 @@ function AccountTwrChart({ state, range }) {
                 labelFormatter={formatDate}
                 formatter={(value) => pct(value)}
               />
-              <Legend {...legendProps} />
+              <Legend {...legendProps} payload={legendPayload} />
               {accountsWithData.map((account) => (
                 <Line
                   key={account.id}

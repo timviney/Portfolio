@@ -9,13 +9,13 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import { seriesInRange, providerColour } from "../lib/model";
-import { twrSeriesByProvider } from "../lib/analytics";
+import { providerColour } from "../lib/model";
+import { twrSeriesByProviderOverRange } from "../lib/analytics";
 import { colourFor, formatDate, pct } from "../lib/format";
 import ChartCard, { NoData, chartAxisProps, chartTooltipStyle, useHiddenSeries } from "./ChartCard";
 
-// Cumulative time-weighted return per provider (company) — one line per provider
-// that has at least one snapshot across its accounts. Approximate — see TwrChart.
+// Time-weighted return per provider (company) over the selected dashboard range.
+// Each line is rebased to 0 at the range start. Approximate — see TwrChart.
 
 function ProviderTwrChart({ state, range }) {
   const { hidden, legendProps } = useHiddenSeries();
@@ -26,7 +26,15 @@ function ProviderTwrChart({ state, range }) {
         .map((account) => account.provider || "Unknown")
     ),
   ];
-  const series = seriesInRange(twrSeriesByProvider(state), range.start, range.end);
+  const series = twrSeriesByProviderOverRange(state, range.start, range.end);
+
+  const legendPayload = providers.map((provider, index) => ({
+    value: provider,
+    dataKey: provider,
+    type: "line",
+    color: providerColour(state, provider) ?? colourFor(index),
+    payload: { provider },
+  }));
 
   return (
     <ChartCard title="Time-weighted return by provider">
@@ -44,7 +52,7 @@ function ProviderTwrChart({ state, range }) {
                 labelFormatter={formatDate}
                 formatter={(value) => pct(value)}
               />
-              <Legend {...legendProps} />
+              <Legend {...legendProps} payload={legendPayload} />
               {providers.map((provider, index) => (
                 <Line
                   key={provider}

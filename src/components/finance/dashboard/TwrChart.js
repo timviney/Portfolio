@@ -8,18 +8,18 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-import { seriesInRange } from "../lib/model";
-import { twrSeries } from "../lib/analytics";
+import { twrSeriesOverRange } from "../lib/analytics";
 import { formatDate, pct } from "../lib/format";
 import ChartCard, { NoData, chartAxisProps, chartTooltipStyle } from "./ChartCard";
 
-// Cumulative time-weighted return over time. Approximate — see the footnote.
+// Time-weighted return over the selected dashboard range. Rebased to 0 at the
+// range start so the line shows return accumulated during the period.
 
 const TWR_FOOTNOTE =
   "Approximate time-weighted return (Modified-Dietz-style): flows are treated as landing exactly on snapshot dates, so accuracy depends on how often balances are recorded.";
 
 function TwrChart({ state, range }) {
-  const series = seriesInRange(twrSeries(state), range.start, range.end);
+  const series = twrSeriesOverRange(state, range.start, range.end);
 
   return (
     <ChartCard title="Time-weighted return" footnote={TWR_FOOTNOTE}>

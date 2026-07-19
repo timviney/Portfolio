@@ -287,6 +287,129 @@ export function twrSeriesByProvider(state) {
 }
 
 /**
+ * Portfolio TWR series rebased to the start of a selected [start, end] range:
+ * [{ date, twr }], where twr is 0 at `start` (or the earliest point ≥ start) and
+ * expresses returns accumulated from `start` to each date. Same approximation as
+ * twrSeries.
+ */
+export function twrSeriesOverRange(state, start, end) {
+  const cumulative = twrSeries(state);
+  if (cumulative.length === 0) return [];
+
+  let atStart = 0;
+  for (const point of cumulative) {
+    if (point.date <= start) atStart = point.twr;
+    else break;
+  }
+
+  const result = [];
+  let hasStart = false;
+  for (const point of cumulative) {
+    if (point.date < start) continue;
+    if (point.date > end) break;
+    if (point.date === start) hasStart = true;
+    result.push({ date: point.date, twr: (1 + point.twr) / (1 + atStart) - 1 });
+  }
+  if (!hasStart) result.unshift({ date: start, twr: 0 });
+  return result;
+}
+
+/**
+ * Per-account TWR series rebased to the start of a selected [start, end] range:
+ * [{ date, [accountId]: twr|null }]. Each account's line is 0 at `start` (or at its
+ * first snapshot if it starts after `start`) and shows returns accumulated over the
+ * range. Accounts with no snapshots in the range are null throughout.
+ */
+export function twrSeriesByAccountOverRange(state, start, end) {
+  const cumulative = twrSeriesByAccount(state);
+  if (cumulative.length === 0) return [];
+
+  const atStart = new Map();
+  for (const point of cumulative) {
+    if (point.date > start) break;
+    for (const account of state.accounts) {
+      const value = point[account.id];
+      if (value !== null && value !== undefined) atStart.set(account.id, value);
+    }
+  }
+
+  const result = [];
+  let hasStart = false;
+  for (const point of cumulative) {
+    if (point.date < start) continue;
+    if (point.date > end) break;
+    if (point.date === start) hasStart = true;
+    const next = { date: point.date };
+    for (const account of state.accounts) {
+      const value = point[account.id];
+      if (value === null || value === undefined) {
+        next[account.id] = null;
+      } else {
+        const startVal = atStart.get(account.id) ?? 0;
+        next[account.id] = (1 + value) / (1 + startVal) - 1;
+      }
+    }
+    result.push(next);
+  }
+
+  if (!hasStart) {
+    const startPoint = { date: start };
+    for (const account of state.accounts) {
+      startPoint[account.id] = atStart.has(account.id) ? 0 : null;
+    }
+    result.unshift(startPoint);
+  }
+  return result;
+}
+
+/**
+ * Per-provider TWR series rebased to the start of a selected [start, end] range:
+ * [{ date, [provider]: twr|null }]. Same semantics as twrSeriesByAccountOverRange.
+ */
+export function twrSeriesByProviderOverRange(state, start, end) {
+  const cumulative = twrSeriesByProvider(state);
+  if (cumulative.length === 0) return [];
+
+  const providers = [...new Set(state.accounts.map((account) => account.provider || "Unknown"))];
+  const atStart = new Map();
+  for (const point of cumulative) {
+    if (point.date > start) break;
+    for (const provider of providers) {
+      const value = point[provider];
+      if (value !== null && value !== undefined) atStart.set(provider, value);
+    }
+  }
+
+  const result = [];
+  let hasStart = false;
+  for (const point of cumulative) {
+    if (point.date < start) continue;
+    if (point.date > end) break;
+    if (point.date === start) hasStart = true;
+    const next = { date: point.date };
+    for (const provider of providers) {
+      const value = point[provider];
+      if (value === null || value === undefined) {
+        next[provider] = null;
+      } else {
+        const startVal = atStart.get(provider) ?? 0;
+        next[provider] = (1 + value) / (1 + startVal) - 1;
+      }
+    }
+    result.push(next);
+  }
+
+  if (!hasStart) {
+    const startPoint = { date: start };
+    for (const provider of providers) {
+      startPoint[provider] = atStart.has(provider) ? 0 : null;
+    }
+    result.unshift(startPoint);
+  }
+  return result;
+}
+
+/**
  * Growth over a period per account: balance(end) − balance(start) − that account's
  * net contributions in (start, end]. Includes archived accounts (their history counts).
  * Returns [{ account, startBalance, endBalance, netContributions, growth, pct, twr }],

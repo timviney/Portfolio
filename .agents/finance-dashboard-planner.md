@@ -365,3 +365,17 @@ Append one entry per step taken. Format: `### YYYY-MM-DD — <step/action>` then
 - For stacked area charts, the first rendered `<Area>` sits at the bottom of the stack while the legend was listing series top-to-bottom in render order, so the legend order was the inverse of the visual stack order.
 - `dashboard/AccountBalancesChart.js` and `dashboard/AccountTypeChart.js` now build a reversed `legendPayload` so the legend reads top-to-bottom from the top of the stack down. Click-to-hide and dimming still work via `dataKey`.
 - `npm run build` compiled successfully.
+
+### 2026-07-19 — TWR calculated relative to the dashboard period
+- User request: TWR should be calculated according to the selected period, not from the start of each account/provider.
+- `lib/analytics.js`: added `twrSeriesOverRange`, `twrSeriesByAccountOverRange`, and `twrSeriesByProviderOverRange` — each rebases the cumulative TWR series to 0 at the range start and returns points within `[start, end]`.
+- `dashboard/TwrChart.js`, `dashboard/AccountTwrChart.js`, `dashboard/ProviderTwrChart.js`: now use the range-relative series so every TWR line starts at 0 at the beginning of the selected dashboard range and shows returns accumulated during that range.
+- The Growth by account table TWR column remains the period TWR (final value of the range-relative series); no change needed there.
+- `npm run build` compiled successfully.
+
+### 2026-07-19 — Chart legends pinned to JSON-defined order
+- User report: chart legends were sorting alphabetically; they should follow the order defined by the accounts / JSON.
+- `dashboard/AllocationChart.js`: added an explicit `legendPayload` built from `allocationBy` slices, preserving JSON order.
+- `dashboard/AccountTwrChart.js` and `dashboard/ProviderTwrChart.js`: added explicit `legendPayload` in account/provider JSON order so Recharts cannot reorder the legend.
+- `dashboard/AccountBalancesChart.js` and `dashboard/AccountTypeChart.js`: legend payload is now forward JSON order (no longer reversed). To keep the visual stack aligned with the legend, the `<Area>` children are rendered in reverse JSON order so the first account/type sits at the top of the stack — both legend and stack now read top-to-bottom in JSON order.
+- `npm run build` compiled successfully.
