@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { defaultData } from "./lib/schema";
 import { load, save, importFile } from "./lib/storage";
 import { replaceAll } from "./lib/actions";
+import BulkUpdateForm from "./entry/BulkUpdateForm";
 
 // Route entry for the /finance mini-app. Owns the single state object (the whole
 // JSON document); all mutations go through pure functions in lib/actions.js via
@@ -116,9 +117,7 @@ function FinanceDashboard() {
             {tab === "Dashboard" && (
               <Placeholder>Dashboard — summary cards, charts and stats arrive in steps 11–13.</Placeholder>
             )}
-            {tab === "Update" && (
-              <Placeholder>Bulk update form arrives in step 8.</Placeholder>
-            )}
+            {tab === "Update" && <BulkUpdateForm state={state} run={run} />}
             {tab === "Accounts" && (
               <Placeholder>Account management arrives in step 9.</Placeholder>
             )}

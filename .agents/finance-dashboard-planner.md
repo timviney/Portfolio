@@ -171,7 +171,7 @@ src/components/finance/
 - [x] **5. Model + format** — `lib/model.js` selectors and `lib/format.js` (`gbp`, `pct`, `formatDate`, fixed palette `colourFor(index)`) per the Key algorithms section.
 - [x] **6. Analytics + ISA** — `lib/analytics.js`, `lib/isa.js` per the Key algorithms section.
 - [x] **7. App shell** — `FinanceDashboard.js`: state + localStorage write-through + tab bar + empty state; register `/finance` route in `src/App.js`. App builds and renders with default data.
-- [ ] **8. Bulk update form** — `entry/BulkUpdateForm.js` per the UI design. This is the most important screen in the app: optimise for keyboard flow (tab straight down the balance column).
+- [x] **8. Bulk update form** — `entry/BulkUpdateForm.js` per the UI design. This is the most important screen in the app: optimise for keyboard flow (tab straight down the balance column).
 - [ ] **9. Account management** — `entry/AccountList.js` + `entry/AccountForm.js`: create/edit/archive, inline new owner/type, expandable row with snapshot history (edit/delete).
 - [ ] **10. Import/Export** — `data/ImportExport.js` with validation errors surfaced readably and a confirm-before-replace dialog.
 - [ ] **11. Summary cards + portfolio chart** — `SummaryCards.js`, `PortfolioValueChart.js`.
@@ -233,3 +233,9 @@ Append one entry per step taken. Format: `### YYYY-MM-DD — <step/action>` then
 - `FinanceDashboard.js` was found already written (unlogged prior session): state via `useState(() => load() ?? defaultData())`, write-through `useEffect` save, `run(action, payload)` mutation funnel, tab bar, empty state with working import; `/finance` route already registered in `src/App.js`. Reviewed against lib APIs — all consistent.
 - Fix applied: the tab bar is now always rendered, and the empty state replaces tab content except on the Accounts tab. Previously the empty state replaced *everything*, so its "Create your first account" button switched to a tab that was never shown — a dead end. Interpretation: design doc says the empty state is shown "instead of tabs content", i.e. the tab bar itself stays visible.
 - Verified with `npm run build` — compiled successfully (the earlier session's no-builds constraint appears to have been dev-server-specific; `npm run build` terminates cleanly on its own). Note: `node --check` silently passes JSX files on this machine (Node 22.8), so it is *not* a valid syntax gate for component files — only the build is.
+
+### 2026-07-19 — Step 8 (bulk update form)
+- `entry/BulkUpdateForm.js`, wired into the Update tab as `<BulkUpdateForm state={state} run={run} />`. Date picker (defaults to today via `todayString()`), one row per active account (colour dot, name, last balance + its date, placeholder = last balance), per-row `+` toggle revealing contribution/withdrawal/notes, save via `addSnapshots`.
+- Keyboard flow per the step's emphasis: wrapped in `<form>` so Enter saves from any field; the per-row toggle is `tabIndex={-1}` so Tab walks balance → balance; first balance input is `autoFocus`; `inputMode="decimal"` for mobile keypads.
+- Deviations/decisions: (1) save is skipped-silently only for *completely* empty rows — a row with flows/notes but no balance blocks the save with a naming error rather than being silently dropped (prevents lost intent; one extra guard clause); (2) invalid amounts (non-numeric/negative) block the whole save with a naming error instead of partial-saving, so a typo never creates a half-complete batch; (3) `parseMoney` accepts pasted "£1,234.56"; (4) date is kept after save (backfilling several dates in a row is a real workflow) while row inputs clear; (5) guard message for the all-accounts-archived edge case.
+- `npm run build` compiled successfully.
