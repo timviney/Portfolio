@@ -173,7 +173,7 @@ src/components/finance/
 - [x] **7. App shell** — `FinanceDashboard.js`: state + localStorage write-through + tab bar + empty state; register `/finance` route in `src/App.js`. App builds and renders with default data.
 - [x] **8. Bulk update form** — `entry/BulkUpdateForm.js` per the UI design. This is the most important screen in the app: optimise for keyboard flow (tab straight down the balance column).
 - [x] **9. Account management** — `entry/AccountList.js` + `entry/AccountForm.js`: create/edit/archive, inline new owner/type, expandable row with snapshot history (edit/delete).
-- [ ] **10. Import/Export** — `data/ImportExport.js` with validation errors surfaced readably and a confirm-before-replace dialog.
+- [x] **10. Import/Export** — `data/ImportExport.js` with validation errors surfaced readably and a confirm-before-replace dialog.
 - [ ] **11. Summary cards + portfolio chart** — `SummaryCards.js`, `PortfolioValueChart.js`.
 - [ ] **12. Remaining charts** — `AccountBalancesChart.js`, `AllocationChart.js` × 4.
 - [ ] **13. Stats panel** — `StatsPanel.js` covering the design doc's Analytics v1 list (with TWR footnote).
@@ -244,4 +244,10 @@ Append one entry per step taken. Format: `### YYYY-MM-DD — <step/action>` then
 - `entry/AccountForm.js`: create/edit in one form (name/provider/owner/type/colour/notes). Owner & type are free-text inputs with `<datalist>` suggestions from config (unique ids via `useId`); new strings flow into config via `configFromAccount` in actions.js. Colour uses native `<input type="color">`; in create mode it defaults to the palette colour the account would get anyway (`defaultColour` prop = `colourFor(accounts.length)`), so palette-by-index behaviour is preserved. Currency deliberately not editable (locked decision: GBP-assumed, display-only v1) — shown read-only in the expanded row instead.
 - `entry/AccountList.js`: header (active/archived counts + Add button; add form auto-opens when zero accounts so the empty-state "Create your first account" button lands somewhere useful), all accounts listed including archived (dimmed + badge), expandable rows showing currency/notes, Edit details (inline AccountForm), Archive/Un-archive, and SnapshotHistory (most-recent-first table with inline edit row + window.confirm delete — low-prominence typo-fixing as specified).
 - Refactor: `parseMoney` moved from BulkUpdateForm into `lib/format.js` (input parsing is formatting's inverse — one home for money-string logic) and is now shared by the bulk form and the snapshot editor.
+- `npm run build` compiled successfully.
+
+
+### 2026-07-19 — Step 10 (import/export)
+- `data/ImportExport.js`, wired into the Data tab as `<ImportExport state={state} run={run} />`. Export card downloads the backup via `storage.exportFile`. Import: hidden file input → `importFile` (validates + normalizes) → modal confirm dialog summarising the file (account/snapshot counts, snapshot date range via `formatDate`) alongside the counts that will be replaced → confirm runs `replaceAll`; cancel discards.
+- Decisions: (1) validation errors are shown verbatim in a `<pre>` under the import button (importFile already produces readable multi-line messages); (2) the confirm dialog is a real modal rather than `window.confirm` because it carries a summary and a destructive warning, and the site has no existing modal component to reuse; (3) a success notice is shown after replace since a file replace has no other visible feedback; (4) FinanceDashboard's own empty-state import path left as-is — with zero accounts there is nothing to lose, so no confirm there.
 - `npm run build` compiled successfully.

@@ -4,6 +4,7 @@ import { load, save, importFile } from "./lib/storage";
 import { replaceAll } from "./lib/actions";
 import BulkUpdateForm from "./entry/BulkUpdateForm";
 import AccountList from "./entry/AccountList";
+import ImportExport from "./data/ImportExport";
 
 // Route entry for the /finance mini-app. Owns the single state object (the whole
 // JSON document); all mutations go through pure functions in lib/actions.js via
@@ -123,9 +124,7 @@ function FinanceDashboard() {
             {tab === "ISA" && (
               <Placeholder>ISA allowance tracking arrives in step 14.</Placeholder>
             )}
-            {tab === "Data" && (
-              <Placeholder>Import / export arrives in step 10.</Placeholder>
-            )}
+            {tab === "Data" && <ImportExport state={state} run={run} />}
           </>
         )}
       </div>
