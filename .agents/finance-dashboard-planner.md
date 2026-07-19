@@ -25,7 +25,7 @@ Agreed with the user on 2026-07-19. Do not silently change these.
 |---|---|
 | Route | `/finance`, following the existing mini-app pattern (`/sudoku`, `/tanks`, `/pubpoint`) |
 | Charting | **Recharts** — the single new dependency |
-| Persistence | **localStorage** auto-save working copy + JSON file import/export as backup/transfer |
+| Persistence | **File-editor model** — the JSON file IS the document: the app opens with a new empty document each visit, edits live in memory, Save downloads the file. Unsaved-changes indicator + `beforeunload` warning + confirm dialog before Open/New. No localStorage. (Changed 2026-07-19, supersedes the earlier localStorage decision.) |
 | Currency | GBP-assumed for all aggregation; `currency` field is display-only in v1 |
 | Tests | **None** (user's call; design doc doesn't require them) |
 | Validation | Hand-rolled plain-JS validator — no zod or similar |
@@ -43,7 +43,7 @@ Agreed with the user on 2026-07-19. Do not silently change these.
 
 ```
 src/components/finance/
-  FinanceDashboard.js        Route entry. Owns all state. Tab layout (see below).
+  FinanceDashboard.js        Route entry. Owns all state, dirty tracking and the unsaved-changes guard. Tab layout (see below).
   dashboard/
     SummaryCards.js          Total / savings / investments / ISA / GIA / taxable / tax-free cards
     PortfolioValueChart.js   Total value over time (line)
@@ -56,10 +56,10 @@ src/components/finance/
     AccountList.js           Accounts table; expand a row for details, edit, archive, snapshot history
     AccountForm.js           Create/edit account (inline "add new" for owner/type via datalist + free text)
   data/
-    ImportExport.js          File download / upload + validation + replace-confirm
+    FilePanel.js             New / Open / Save document; validation errors surfaced readably
   lib/
     schema.js                Defaults, normalization, validation (pure)
-    storage.js               localStorage load/save + file download/read
+    file.js                  Document open/save (file read + download)
     actions.js               Pure state transitions (addSnapshots, upsertAccount, archiveAccount, replaceAll...)
     model.js                 Selectors (latest balances, balance-as-of, portfolio series, allocations)
     analytics.js             Growth, net contributions, TWR approximation (pure)
@@ -73,7 +73,7 @@ src/components/finance/
 - ALL mutations go through pure functions in `lib/actions.js`: `setState(prev => someAction(prev, payload))`.
 - UI components contain zero business logic — they render selector output and call actions.
 - `lib/` functions are pure and independently readable; this is where complexity lives, nowhere else.
-- Persistence: a `useEffect` in `FinanceDashboard` writes state to localStorage on every change (data is tiny — no debounce needed).
+- Persistence: none between sessions. `FinanceDashboard` keeps the last-saved document object; `dirty = state !== saved`. Save = download the JSON file; Open/New with unsaved changes go through a confirm dialog; a `beforeunload` handler warns on page leave while dirty.
 
 ---
 
@@ -147,15 +147,15 @@ src/components/finance/
 
 ## UI design
 
-**Tabs** in `FinanceDashboard`: `Dashboard | Update | Accounts | ISA | Data`
+**Tabs** in `FinanceDashboard`: `Dashboard | Update | Accounts | ISA | File`. The tab bar also shows an unsaved-changes indicator and a Save button.
 
 - **Dashboard**: SummaryCards (total, savings, investments, ISA, GIA, taxable, tax-free), PortfolioValueChart, AccountBalancesChart, 4 × AllocationChart (grid; groupBy account/type/provider/owner), StatsPanel.
 - **Update**: BulkUpdateForm — date picker (default today), one row per active account showing name + last balance (+ its date), empty "new balance" input per row (placeholder = last balance), per-row expandable contribution/withdrawal/notes. Save creates snapshots **only for rows with a non-empty new balance**, then clears inputs and confirms "Saved N snapshots".
   - *Simplification of the design doc's "selecting multiple accounts": the non-empty field IS the selection — no checkboxes. Fewer clicks, same outcome.*
 - **Accounts**: AccountList + AccountForm. Expanding a row shows notes/details and the snapshot history table with edit/delete (typo-fixing only).
 - **ISA**: IsaPanel — per-owner cards/table for the selected tax year: contributions, withdrawals, net, remaining allowance; tax year selector; small editor to add/edit tax years (config lives here because ISA tracking is its only consumer).
-- **Data**: ImportExport — export button (downloads `finance-backup-YYYY-MM-DD.json`), import file picker → validate → confirm-replace dialog → apply.
-- **Empty state** (no accounts): friendly prompt with "Import JSON" and "Create your first account" buttons, shown instead of tabs content.
+- **File**: FilePanel — New document, Open file (validate → unsaved-changes guard → apply), Save (downloads `finance-YYYY-MM-DD.json`). Opening or creating a document with unsaved changes prompts Save & continue / Discard / Cancel.
+- **Empty state** (no accounts): friendly prompt with "Open file…" and "Create your first account" buttons, shown instead of tabs content.
 - Account/owner/type grouping colours: `account.colour` where applicable; otherwise assign from a fixed palette by index (`format.js`).
 
 ---
@@ -166,14 +166,15 @@ src/components/finance/
 
 - [x] **1. Install Recharts** — `npm install recharts`. Verify `npm start` still works.
 - [x] **2. Scaffold + schema** — create the folder structure; implement `lib/schema.js` (`defaultData()`, `validate()`, `normalize()`, `STORAGE_KEY`) exactly per the Data model section.
-- [x] **3. Storage** — `lib/storage.js`: `load()` (localStorage → parse → validate, return `null` if absent/invalid), `save()`, `exportFile(state)` (Blob download), `importFile(file)` (async → validated+normalized state or thrown readable error).
+- [x] **3. File I/O** — `lib/file.js`: `saveFile(state)` (Blob download), `openFile(file)` (async → validated+normalized state or thrown readable error). (Reworked from the localStorage `storage.js` in step 10b.)
 - [x] **4. Actions** — `lib/actions.js`: `createAccount`, `updateAccount`, `setArchived`, `addSnapshots` (bulk), `updateSnapshot`, `deleteSnapshot`, `updateTaxYears`, `replaceAll`. Pure; UUID ids; 2dp rounding; owners/types lists auto-extended when a new string is used.
 - [x] **5. Model + format** — `lib/model.js` selectors and `lib/format.js` (`gbp`, `pct`, `formatDate`, fixed palette `colourFor(index)`) per the Key algorithms section.
 - [x] **6. Analytics + ISA** — `lib/analytics.js`, `lib/isa.js` per the Key algorithms section.
-- [x] **7. App shell** — `FinanceDashboard.js`: state + localStorage write-through + tab bar + empty state; register `/finance` route in `src/App.js`. App builds and renders with default data.
+- [x] **7. App shell** — `FinanceDashboard.js`: state + dirty tracking + tab bar + empty state; register `/finance` route in `src/App.js`. App builds and renders with default data.
 - [x] **8. Bulk update form** — `entry/BulkUpdateForm.js` per the UI design. This is the most important screen in the app: optimise for keyboard flow (tab straight down the balance column).
 - [x] **9. Account management** — `entry/AccountList.js` + `entry/AccountForm.js`: create/edit/archive, inline new owner/type, expandable row with snapshot history (edit/delete).
-- [x] **10. Import/Export** — `data/ImportExport.js` with validation errors surfaced readably and a confirm-before-replace dialog.
+- [x] **10. Import/Export** — `data/ImportExport.js` with validation errors surfaced readably and a confirm-before-replace dialog. (Superseded by 10b the same day.)
+- [x] **10b. File-editor persistence rework** — user decision: the app behaves like a document editor, not an auto-saving app. New empty document on every visit; no localStorage; `lib/file.js` (`saveFile`/`openFile`), `data/FilePanel.js` (New/Open/Save); dirty tracking (`state !== savedDoc`), unsaved-changes confirm (Save & continue / Discard / Cancel) and `beforeunload` warning in `FinanceDashboard.js`; Data tab renamed File; download renamed `finance-YYYY-MM-DD.json`.
 - [ ] **11. Summary cards + portfolio chart** — `SummaryCards.js`, `PortfolioValueChart.js`.
 - [ ] **12. Remaining charts** — `AccountBalancesChart.js`, `AllocationChart.js` × 4.
 - [ ] **13. Stats panel** — `StatsPanel.js` covering the design doc's Analytics v1 list (with TWR footnote).
@@ -192,7 +193,7 @@ src/components/finance/
 - Analytics v1: exactly the listed calculations — nothing extra.
 - ISA: contributions by tax year and owner, remaining allowance, configurable tax years.
 - Data entry: multi-account, single-save bulk update; fast.
-- Import/export with validation; client-side only; single JSON document; no new dependencies beyond Recharts.
+- File open/save with validation; unsaved-changes indicator + leave warning; client-side only; single JSON document; no new dependencies beyond Recharts.
 - `npm run build` succeeds.
 
 ---
@@ -251,3 +252,13 @@ Append one entry per step taken. Format: `### YYYY-MM-DD — <step/action>` then
 - `data/ImportExport.js`, wired into the Data tab as `<ImportExport state={state} run={run} />`. Export card downloads the backup via `storage.exportFile`. Import: hidden file input → `importFile` (validates + normalizes) → modal confirm dialog summarising the file (account/snapshot counts, snapshot date range via `formatDate`) alongside the counts that will be replaced → confirm runs `replaceAll`; cancel discards.
 - Decisions: (1) validation errors are shown verbatim in a `<pre>` under the import button (importFile already produces readable multi-line messages); (2) the confirm dialog is a real modal rather than `window.confirm` because it carries a summary and a destructive warning, and the site has no existing modal component to reuse; (3) a success notice is shown after replace since a file replace has no other visible feedback; (4) FinanceDashboard's own empty-state import path left as-is — with zero accounts there is nothing to lose, so no confirm there.
 - `npm run build` compiled successfully.
+
+
+### 2026-07-19 — Step 10b (file-editor persistence rework)
+- User decision: the app should behave like an online document editor, not an auto-saving app — fresh empty document on every visit, unsaved-changes indicator, warning on leaving without saving, the JSON file as the document rather than a backup. Locked decisions, architecture rules, target structure, UI design, steps 3/7/10 and the DoD updated to match (step 10's ImportExport superseded the same day). This also matches the design doc more literally ("Data stored as a single JSON file").
+- `lib/file.js` replaces `lib/storage.js`: `saveFile(state)` (downloads `finance-YYYY-MM-DD.json`), `openFile(file)` (validate + normalize or readable thrown error). `STORAGE_KEY` removed from `schema.js`; localStorage is no longer touched anywhere.
+- `FinanceDashboard.js`: `savedDoc` state holds the last saved/opened document object; `dirty = state !== savedDoc` (actions always return a new object, so identity comparison is exact). `guardUnsaved(action)` routes Open/New through a modal (Save & continue / Discard changes / Cancel) when dirty. `beforeunload` listener active only while dirty. Tab bar gains an amber "● Unsaved changes" indicator and an always-visible Save button; Data tab renamed File; empty-state button is now "Open file…" and its open path also goes through the guard.
+- `data/FilePanel.js` replaces `data/ImportExport.js`: Save / Open / New cards; stays dumb — dirty flag and guards live in FinanceDashboard; only open-validation errors are rendered locally.
+- `replaceAll` in actions.js is no longer called by the UI (applyDocument sets state directly); kept as part of the planned actions API.
+- `npm run build` compiled successfully (clean, no warnings).
+- Not yet manually verified in the browser (beforeunload prompt, guard dialog) — folded into step 16's end-to-end check.

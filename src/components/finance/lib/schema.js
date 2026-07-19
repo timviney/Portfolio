@@ -1,7 +1,6 @@
 // Shape, defaults and validation for the finance dashboard's single JSON document.
 // See .agents/finance-dashboard-planner.md for the data model and its semantics.
 
-export const STORAGE_KEY = "finance-dashboard-data";
 export const SCHEMA_VERSION = 1;
 
 const DEFAULT_ACCOUNT_COLOUR = "#6b7280";
