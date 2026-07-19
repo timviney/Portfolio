@@ -169,7 +169,7 @@ src/components/finance/
 - [x] **3. Storage** — `lib/storage.js`: `load()` (localStorage → parse → validate, return `null` if absent/invalid), `save()`, `exportFile(state)` (Blob download), `importFile(file)` (async → validated+normalized state or thrown readable error).
 - [x] **4. Actions** — `lib/actions.js`: `createAccount`, `updateAccount`, `setArchived`, `addSnapshots` (bulk), `updateSnapshot`, `deleteSnapshot`, `updateTaxYears`, `replaceAll`. Pure; UUID ids; 2dp rounding; owners/types lists auto-extended when a new string is used.
 - [x] **5. Model + format** — `lib/model.js` selectors and `lib/format.js` (`gbp`, `pct`, `formatDate`, fixed palette `colourFor(index)`) per the Key algorithms section.
-- [ ] **6. Analytics + ISA** — `lib/analytics.js`, `lib/isa.js` per the Key algorithms section.
+- [x] **6. Analytics + ISA** — `lib/analytics.js`, `lib/isa.js` per the Key algorithms section.
 - [ ] **7. App shell** — `FinanceDashboard.js`: state + localStorage write-through + tab bar + empty state; register `/finance` route in `src/App.js`. App builds and renders with default data.
 - [ ] **8. Bulk update form** — `entry/BulkUpdateForm.js` per the UI design. This is the most important screen in the app: optimise for keyboard flow (tab straight down the balance column).
 - [ ] **9. Account management** — `entry/AccountList.js` + `entry/AccountForm.js`: create/edit/archive, inline new owner/type, expandable row with snapshot history (edit/delete).
@@ -222,3 +222,9 @@ Append one entry per step taken. Format: `### YYYY-MM-DD — <step/action>` then
 - `config.taxableTypes` restored to `schema.js` (defaults `["Savings Account", "GIA"]`; validation + normalization included). `summaryTotals` in `model.js` now also returns `taxable` and `taxFree`.
 - SummaryCards (step 11) will show 7 cards: total, savings, investments, ISA, GIA, taxable, tax-free. Plan's data model, semantics, UI design and DoD sections updated to match.
 - `config.stocksTypes` remains dropped — still no consumer.
+
+### 2026-07-19 — Step 6 (analytics, ISA)
+- `lib/analytics.js`: `netContributions(state, start, end, accountIds?)` (start < date <= end), `totalNetContributions`, `valueAtDate` (carry-forward via `portfolioSeries`), `growthOverPeriod` (value(end) − value(start) − net; pct vs value(start) + net, documented simple approximation, null pct on zero base), `twrApproximation` (Modified-Dietz-style over the portfolio series, documented approximation, null if < 2 points or no positive base), `growthByAccount` / `growthByType` (per-account balance deltas − own net flows, archived accounts included, growth-desc). Built on `model.js` selectors, no re-implementation.
+- `lib/isa.js`: `taxYearForDate`, `currentTaxYear` (via `format.js` `todayString`, lexicographic compares only), `isaSummary(state, taxYear)` (per-owner contributions/withdrawals/net/allowance/remaining for `type ∈ isaTypes`, zero rows for owners with ISA accounts but no activity), `currentIsaSummary`.
+- Verified with `node --check` only (no build/dev-server per session constraint).
+- Deviations: none in semantics. Two small presentation choices, both documented in JSDoc: (1) `growthByAccount`/`growthByType` include archived accounts (history counts, consistent with series rules); (2) `isaSummary` emits a zero row for owners holding an ISA account but with no flows in the year, so the panel can show their full remaining allowance.
