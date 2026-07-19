@@ -147,6 +147,47 @@ export function twrOverRange(state, start, end) {
 }
 
 /**
+ * Cumulative TWR per account over the union of all snapshot dates:
+ * [{ date, [accountId]: twr|null }] (twr as a ratio). An account is null before its
+ * first snapshot, 0 at it, and afterwards chains r_i = (B_i − B_{i−1} − F_i) / B_{i−1}
+ * where F is the snapshot's own contribution − withdrawal and B the account's
+ * balances. Periods with B_{i−1} = 0 are skipped. Same Modified-Dietz-style
+ * approximation as the portfolio TWR.
+ */
+export function twrSeriesByAccount(state) {
+  if (state.snapshots.length === 0) return [];
+  const dates = [...new Set(state.snapshots.map((snapshot) => snapshot.date))].sort();
+  const histories = new Map(state.accounts.map((account) => [account.id, accountHistory(state, account.id)]));
+  const cursors = new Map(state.accounts.map((account) => [account.id, 0]));
+  const twrs = new Map(); // accountId -> cumulative twr ratio at the cursor
+
+  return dates.map((date) => {
+    const point = { date };
+    for (const account of state.accounts) {
+      const history = histories.get(account.id);
+      let cursor = cursors.get(account.id);
+      while (cursor < history.length && history[cursor].date <= date) {
+        if (cursor === 0) {
+          twrs.set(account.id, 0);
+        } else {
+          const snapshot = history[cursor];
+          const previous = history[cursor - 1].balance;
+          if (previous > 0) {
+            const flows = snapshot.contribution - snapshot.withdrawal;
+            const growth = (snapshot.balance - previous - flows) / previous;
+            twrs.set(account.id, (1 + (twrs.get(account.id) ?? 0)) * (1 + growth) - 1);
+          }
+        }
+        cursor++;
+      }
+      cursors.set(account.id, cursor);
+      point[account.id] = cursor > 0 ? twrs.get(account.id) : null;
+    }
+    return point;
+  });
+}
+
+/**
  * Growth over a period per account: balance(end) − balance(start) − that account's
  * net contributions in (start, end]. Includes archived accounts (their history counts).
  * Returns [{ account, startBalance, endBalance, netContributions, growth, pct }],

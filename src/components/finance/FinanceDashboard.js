@@ -10,6 +10,7 @@ import PortfolioValueChart from "./dashboard/PortfolioValueChart";
 import AccountBalancesChart from "./dashboard/AccountBalancesChart";
 import AccountTypeChart from "./dashboard/AccountTypeChart";
 import TwrChart from "./dashboard/TwrChart";
+import AccountTwrChart from "./dashboard/AccountTwrChart";
 import AllocationChart from "./dashboard/AllocationChart";
 import StatsPanel from "./dashboard/StatsPanel";
 import IsaPanel from "./dashboard/IsaPanel";
@@ -59,9 +60,11 @@ function FinanceDashboard() {
     setSavedDoc(next);
   };
 
-  const handleSave = () => {
-    saveFile(state);
-    setSavedDoc(state);
+  // Returns true if the file was written; false if the user cancelled the dialog.
+  const handleSave = async () => {
+    const saved = await saveFile(state);
+    if (saved) setSavedDoc(state); // only mark clean once it's actually on disk
+    return saved;
   };
 
   // Open/New replace the document — confirm first when there are unsaved changes.
@@ -222,6 +225,7 @@ function FinanceDashboard() {
                 <AccountBalancesChart state={state} range={range} />
                 <AccountTypeChart state={state} range={range} />
                 <TwrChart state={state} range={range} />
+                <AccountTwrChart state={state} range={range} />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <AllocationChart state={state} groupBy="account" title="Allocation by account" asOf={range.end} />
                   <AllocationChart state={state} groupBy="type" title="Allocation by type" asOf={range.end} />
@@ -259,10 +263,12 @@ function FinanceDashboard() {
                 <button
                   type="button"
                   autoFocus
-                  onClick={() => {
-                    handleSave();
-                    pendingAction();
-                    setPendingAction(null);
+                  onClick={async () => {
+                    // Cancelling the save dialog aborts the whole action.
+                    if (await handleSave()) {
+                      pendingAction();
+                      setPendingAction(null);
+                    }
                   }}
                   className="px-6 py-2 rounded-lg bg-designColor text-bodyColor font-titleFont hover:opacity-80 transition-opacity duration-300"
                 >

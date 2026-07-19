@@ -25,7 +25,7 @@ Agreed with the user on 2026-07-19. Do not silently change these.
 |---|---|
 | Route | `/finance`, following the existing mini-app pattern (`/sudoku`, `/tanks`, `/pubpoint`) |
 | Charting | **Recharts** — the single new dependency |
-| Persistence | **File-editor model** — the JSON file IS the document: the app opens with a new empty document each visit, edits live in memory, Save downloads the file. Unsaved-changes indicator + `beforeunload` warning + confirm dialog before Open/New. No localStorage. (Changed 2026-07-19, supersedes the earlier localStorage decision.) |
+| Persistence | **File-editor model** — the JSON file IS the document: the app opens with a start screen (no document until Open/New), edits live in memory, Save uses the native Save As dialog (`showSaveFilePicker`, download fallback). Unsaved-changes indicator + `beforeunload` warning + confirm dialog before Open/New. No localStorage. (Changed 2026-07-19, supersedes the earlier localStorage decision.) |
 | Currency | GBP-assumed for all aggregation; `currency` field is display-only in v1 |
 | Tests | **None** (user's call; design doc doesn't require them) |
 | Validation | Hand-rolled plain-JS validator — no zod or similar |
@@ -50,6 +50,7 @@ src/components/finance/
     AccountBalancesChart.js  Per-account balances over time (stacked area)
     AccountTypeChart.js      Balances over time grouped by account type (stacked area)
     TwrChart.js              Cumulative time-weighted return over time (line)
+    AccountTwrChart.js       Cumulative TWR per account (multi-line)
     DateRangePicker.js       Start/end inputs; drives every chart and stat on the tab
     ChartCard.js             Shared chart card wrapper + dark-theme Recharts constants
     AllocationChart.js       One reusable pie; prop groupBy = account | type | provider | owner
@@ -63,7 +64,7 @@ src/components/finance/
     FilePanel.js             New / Open / Save document; validation errors surfaced readably
   lib/
     schema.js                Defaults, normalization, validation (pure)
-    file.js                  Document open/save (file read + download)
+    file.js                  Document open/save (native Save As dialog, download fallback)
     actions.js               Pure state transitions (addSnapshots, upsertAccount, archiveAccount, replaceAll...)
     model.js                 Selectors (latest balances, balance-as-of, portfolio series, allocations)
     analytics.js             Growth, net contributions, TWR approximation (pure)
@@ -186,6 +187,8 @@ src/components/finance/
 - [x] **13. Stats panel** — `StatsPanel.js` covering the design doc's Analytics v1 list (with TWR footnote).
 - [x] **13b. Dashboard date range + extra charts** — user request: start/end date picker for all dashboard stats/charts (default last year), accounts chart as stacked area, matching by-type area chart, cumulative TWR line chart. Adds `seriesInRange`/`balanceSeriesByType` + `asOf` params (model), `flowTotals` range + `twrSeries`/`twrOverRange` (analytics), `yearAgoString` (format), `DateRangePicker`/`AccountTypeChart`/`TwrChart` (dashboard).
 - [x] **14. ISA panel** — `IsaPanel.js` incl. tax year editor.
+- [x] **14b. Native Save As** — `saveFile` uses `showSaveFilePicker` (user picks name/location, can overwrite; cancel leaves the doc dirty and aborts a guarded Open/New), plain-download fallback where unsupported.
+- [x] **14c. Per-account TWR chart** — `twrSeriesByAccount` (analytics) chains each account's own snapshots (r_i = (B_i − B_{i−1} − F_i)/B_{i−1}); `AccountTwrChart.js` renders one line per account, range-aware like the other charts.
 - [ ] **15. Styling pass** — consistent with site theme tokens; check at mobile width too.
 - [ ] **16. End-to-end manual verification** — exercise the full workflow in `npm start`: create accounts → bulk updates across several dates → charts/cards/stats/ISA update correctly → export → import roundtrip → validation errors on a doctored file → archive behaviour → refresh persistence.
 - [ ] **17. Final review** — walk the design doc section by section and confirm every requirement is met (or consciously deferred with the user). `npm run build` passes clean.
@@ -304,4 +307,19 @@ Append one entry per step taken. Format: `### YYYY-MM-DD — <step/action>` then
 - `dashboard/IsaPanel.js`, wired into the ISA tab as `<IsaPanel state={state} run={run} />`. Header holds the tax year `<select>` (defaults to the tax year containing today via `currentTaxYear`, else the last configured) and the editor toggle. Summary table per owner from `isaSummary`: contributions, withdrawals, net, remaining allowance (remaining in designColor, red when over-contributed). Guards for no configured tax years and no ISA accounts.
 - Tax year editor: inline table over `config.taxYears` (name / start / end / allowance), add-row and remove-row, validated on save (name required + unique, YYYY-MM-DD dates, start < end, allowance ≥ 0 via `parseMoney`) and written wholesale through `updateTaxYears`. Remove went beyond the plan's "add/edit" by one button — it's the natural way to fix a mistakenly added year and costs one `filter`.
 - `FinanceDashboard.js`: `Placeholder` component deleted — the ISA tab was its last consumer, so every tab now has real content.
+- `npm run build` compiled successfully.
+
+
+### 2026-07-19 — Step 14b (native Save As)
+- User request: saving should open the folder picker so the user chooses the filename and can overwrite an existing file.
+- `lib/file.js`: `saveFile` is now async and uses `window.showSaveFilePicker` (suggested name `finance-YYYY-MM-DD.json`, `.json` filter); the old Blob-download path remains as a fallback where the API doesn't exist (Firefox/Safari). Returns true on write, false on dialog cancel (AbortError); other errors propagate.
+- `FinanceDashboard.js`: `handleSave` only clears the dirty flag when the file was actually written, and the guard modal's "Save & continue" aborts (stays open) if the user cancels the save dialog — matching how desktop editors behave.
+- `FilePanel.js`: copy updated ("Save as…", mentions choosing location/overwriting).
+- `npm run build` compiled successfully. The picker itself needs a manual browser check (step 16) — it's Chromium-only by design.
+
+
+### 2026-07-19 — Step 14c (per-account TWR chart)
+- User request: a TWR line chart for each individual account.
+- `lib/analytics.js`: `twrSeriesByAccount(state)` — cumulative TWR per account over the union of all snapshot dates, chaining r_i = (B_i − B_{i−1} − F_i)/B_{i−1} from the account's own snapshots (F = the snapshot's contribution − withdrawal, which is exactly the flow since the previous snapshot per the data model). Null before an account's first snapshot, 0 at it, zero-base periods skipped.
+- `dashboard/AccountTwrChart.js`: multi-line chart, one line per account with snapshots in `account.colour`, clipped by the dashboard range via `seriesInRange`; placed directly after the portfolio TwrChart.
 - `npm run build` compiled successfully.

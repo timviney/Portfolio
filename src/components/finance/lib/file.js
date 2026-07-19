@@ -6,15 +6,41 @@
 import { validate, normalize } from "./schema";
 import { todayString } from "./format";
 
-/** Downloads the document as finance-YYYY-MM-DD.json. */
-export function saveFile(state) {
-  const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+/**
+ * Saves the document through the native Save As dialog (File System Access API),
+ * so the user picks the name and location and can overwrite an existing file.
+ * Falls back to a plain download where the API isn't available (e.g. Firefox).
+ * Returns true if the file was written, false if the user cancelled the dialog.
+ */
+export async function saveFile(state) {
+  const contents = JSON.stringify(state, null, 2);
+  const suggestedName = `finance-${todayString()}.json`;
+
+  if (window.showSaveFilePicker) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName,
+        types: [{ description: "Finance document (JSON)", accept: { "application/json": [".json"] } }],
+      });
+      const writable = await handle.createWritable();
+      await writable.write(contents);
+      await writable.close();
+      return true;
+    } catch (e) {
+      if (e?.name === "AbortError") return false; // user cancelled the dialog
+      throw e;
+    }
+  }
+
+  // Fallback: plain download to the browser's download folder.
+  const blob = new Blob([contents], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `finance-${todayString()}.json`;
+  a.download = suggestedName;
   a.click();
   URL.revokeObjectURL(url);
+  return true;
 }
 
 /**

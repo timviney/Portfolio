@@ -32,13 +32,14 @@ function FilePanel({ state, dirty, onNew, onOpen, onSave }) {
       <div className={cardClass}>
         <h2 className="text-xl font-titleFont font-bold text-lightText mb-2">Save</h2>
         <p className="text-lightText font-bodyFont mb-4">
-          Nothing is stored in the browser — download the document to keep your changes.
+          Nothing is stored in the browser — save the document to your computer to keep your
+          changes. You'll be asked where to save it and can overwrite a previous file.
           {dirty && (
             <span className="text-amber-400"> You have unsaved changes.</span>
           )}
         </p>
         <button type="button" onClick={onSave} className={primaryButtonClass}>
-          Save (download .json)
+          Save as…
         </button>
       </div>
 
