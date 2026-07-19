@@ -25,6 +25,17 @@ export function totalNetContributions(state) {
   return net;
 }
 
+/** All-time flow totals: { contributions, withdrawals, net } across all accounts. */
+export function flowTotals(state) {
+  let contributions = 0;
+  let withdrawals = 0;
+  for (const snapshot of state.snapshots) {
+    contributions += snapshot.contribution;
+    withdrawals += snapshot.withdrawal;
+  }
+  return { contributions, withdrawals, net: contributions - withdrawals };
+}
+
 /**
  * Portfolio value at date D: the last portfolioSeries point <= D (carry-forward only).
  * 0 if no snapshot exists on or before D.

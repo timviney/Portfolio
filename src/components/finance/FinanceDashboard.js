@@ -4,6 +4,11 @@ import { openFile, saveFile } from "./lib/file";
 import BulkUpdateForm from "./entry/BulkUpdateForm";
 import AccountList from "./entry/AccountList";
 import FilePanel from "./data/FilePanel";
+import SummaryCards from "./dashboard/SummaryCards";
+import PortfolioValueChart from "./dashboard/PortfolioValueChart";
+import AccountBalancesChart from "./dashboard/AccountBalancesChart";
+import AllocationChart from "./dashboard/AllocationChart";
+import StatsPanel from "./dashboard/StatsPanel";
 
 // Route entry for the /finance mini-app. Owns the single state object (the whole
 // JSON document); all mutations go through pure functions in lib/actions.js via
@@ -212,7 +217,18 @@ function FinanceDashboard() {
         ) : (
           <>
             {tab === "Dashboard" && (
-              <Placeholder>Dashboard — summary cards, charts and stats arrive in steps 11–13.</Placeholder>
+              <div className="flex flex-col gap-4">
+                <SummaryCards state={state} />
+                <PortfolioValueChart state={state} />
+                <AccountBalancesChart state={state} />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <AllocationChart state={state} groupBy="account" title="Allocation by account" />
+                  <AllocationChart state={state} groupBy="type" title="Allocation by type" />
+                  <AllocationChart state={state} groupBy="provider" title="Allocation by provider" />
+                  <AllocationChart state={state} groupBy="owner" title="Allocation by owner" />
+                </div>
+                <StatsPanel state={state} />
+              </div>
             )}
             {tab === "Update" && <BulkUpdateForm state={state} run={run} />}
             {tab === "Accounts" && <AccountList state={state} run={run} />}

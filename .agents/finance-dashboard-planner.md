@@ -177,9 +177,9 @@ src/components/finance/
 - [x] **10. Import/Export** — `data/ImportExport.js` with validation errors surfaced readably and a confirm-before-replace dialog. (Superseded by 10b the same day.)
 - [x] **10b. File-editor persistence rework** — user decision: the app behaves like a document editor, not an auto-saving app. New empty document on every visit; no localStorage; `lib/file.js` (`saveFile`/`openFile`), `data/FilePanel.js` (New/Open/Save); dirty tracking (`state !== savedDoc`), unsaved-changes confirm (Save & continue / Discard / Cancel) and `beforeunload` warning in `FinanceDashboard.js`; Data tab renamed File; download renamed `finance-YYYY-MM-DD.json`.
 - [x] **10c. Start screen** — no implicit empty document: `FinanceDashboard` state starts as `null` and the app renders a start screen (Open file… / New document) until the user picks one. Tabs only appear once a document exists.
-- [ ] **11. Summary cards + portfolio chart** — `SummaryCards.js`, `PortfolioValueChart.js`.
-- [ ] **12. Remaining charts** — `AccountBalancesChart.js`, `AllocationChart.js` × 4.
-- [ ] **13. Stats panel** — `StatsPanel.js` covering the design doc's Analytics v1 list (with TWR footnote).
+- [x] **11. Summary cards + portfolio chart** — `SummaryCards.js`, `PortfolioValueChart.js`.
+- [x] **12. Remaining charts** — `AccountBalancesChart.js`, `AllocationChart.js` × 4.
+- [x] **13. Stats panel** — `StatsPanel.js` covering the design doc's Analytics v1 list (with TWR footnote).
 - [ ] **14. ISA panel** — `IsaPanel.js` incl. tax year editor.
 - [ ] **15. Styling pass** — consistent with site theme tokens; check at mobile width too.
 - [ ] **16. End-to-end manual verification** — exercise the full workflow in `npm start`: create accounts → bulk updates across several dates → charts/cards/stats/ISA update correctly → export → import roundtrip → validation errors on a doctored file → archive behaviour → refresh persistence.
@@ -271,3 +271,15 @@ Append one entry per step taken. Format: `### YYYY-MM-DD — <step/action>` then
 - `FinanceDashboard.js`: `state` now starts as `null` and the component returns a start screen (Open file… / New document, validation errors inline) until a document exists; tabs only render afterwards. The file-picker input and open handler are shared between the start screen and the no-accounts empty state. `dirty` is false while no document is open, so the start screen never triggers the beforeunload warning.
 - Plan updated: new Start screen bullet in the UI design section, step 10c added and ticked.
 - `npm run build` compiled successfully.
+
+
+### 2026-07-19 — Steps 11–13 (dashboard: cards, charts, stats)
+- `dashboard/ChartCard.js` (new, shared): card wrapper with title/footnote plus `chartTooltipStyle`/`chartAxisProps` constants so all Recharts charts match the dark theme; `NoData` empty-note shared by every chart (dashboard is reachable with accounts but zero snapshots).
+- `SummaryCards.js`: the 7 cards (total, savings, investments, ISA, GIA, taxable, tax-free) straight from `summaryTotals`; responsive 2/3/4/7-column grid.
+- `PortfolioValueChart.js`: single line over `portfolioSeries`, `formatDate` axis ticks, `gbpShort` Y ticks, `gbp` tooltip.
+- `AccountBalancesChart.js`: one line per account that has ≥1 snapshot, stroked with `account.colour`, `connectNulls` so lines start at each account's first snapshot.
+- `AllocationChart.js`: reusable donut (innerRadius 45%) driven by `allocationBy(state, groupBy)`; tooltips show `gbp` + percentage of the pie (the design doc's "current allocation percentages"); rendered 4× in a 2-col grid (account / type / provider / owner).
+- `StatsPanel.js`: whole-history period (first → latest snapshot date): total growth, % growth, contributions, withdrawals, net contributions, TWR, plus growth-by-account and growth-by-type tables (negative growth in red, "—" for null pct/TWR). Footnote documents the Modified-Dietz-style TWR approximation and the simple growth-% approximation.
+- `lib/analytics.js`: added `flowTotals(state)` ({ contributions, withdrawals, net }) — the StatsPanel needs the split totals and UI components must not sum flows themselves.
+- Dashboard tab in `FinanceDashboard.js` now composes all of the above; the `Placeholder` component remains only for the ISA tab (step 14).
+- `npm run build` compiled successfully. Charts not yet visually verified in the browser — folded into step 16.
