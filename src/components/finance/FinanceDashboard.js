@@ -11,6 +11,7 @@ import AccountBalancesChart from "./dashboard/AccountBalancesChart";
 import AccountTypeChart from "./dashboard/AccountTypeChart";
 import TwrChart from "./dashboard/TwrChart";
 import AccountTwrChart from "./dashboard/AccountTwrChart";
+import ProviderTwrChart from "./dashboard/ProviderTwrChart";
 import AllocationChart from "./dashboard/AllocationChart";
 import StatsPanel from "./dashboard/StatsPanel";
 import IsaPanel from "./dashboard/IsaPanel";
@@ -226,6 +227,7 @@ function FinanceDashboard() {
                 <AccountTypeChart state={state} range={range} />
                 <TwrChart state={state} range={range} />
                 <AccountTwrChart state={state} range={range} />
+                <ProviderTwrChart state={state} range={range} />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <AllocationChart state={state} groupBy="account" title="Allocation by account" asOf={range.end} />
                   <AllocationChart state={state} groupBy="type" title="Allocation by type" asOf={range.end} />

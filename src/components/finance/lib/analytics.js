@@ -188,6 +188,70 @@ export function twrSeriesByAccount(state) {
 }
 
 /**
+ * Cumulative TWR per provider over the union of all snapshot dates:
+ * [{ date, [provider]: twr|null }] (twr as a ratio). Computed like the portfolio
+ * TWR but restricted to each provider's accounts: V = the carried sum of their
+ * balances, F = their net flows recorded at each point. Null before a provider's
+ * first snapshot, 0 at it, zero-base periods skipped. Same approximation as twrSeries.
+ */
+export function twrSeriesByProvider(state) {
+  if (state.snapshots.length === 0) return [];
+  const providers = [...new Set(state.accounts.map((account) => account.provider || "Unknown"))];
+  const providerOf = new Map(state.accounts.map((account) => [account.id, account.provider || "Unknown"]));
+  const dates = [...new Set(state.snapshots.map((snapshot) => snapshot.date))].sort();
+  const histories = new Map(state.accounts.map((account) => [account.id, accountHistory(state, account.id)]));
+  const cursors = new Map(state.accounts.map((account) => [account.id, 0]));
+
+  // Net flows per provider at each date (flows sit on the snapshot they arrived with).
+  const flowsByDate = new Map();
+  for (const snapshot of state.snapshots) {
+    const provider = providerOf.get(snapshot.accountId);
+    if (!provider) continue;
+    const atDate = flowsByDate.get(snapshot.date) ?? new Map();
+    atDate.set(provider, (atDate.get(provider) ?? 0) + snapshot.contribution - snapshot.withdrawal);
+    flowsByDate.set(snapshot.date, atDate);
+  }
+
+  const values = new Map(); // provider -> carried value at the previous point
+  const twrs = new Map(); // provider -> cumulative twr ratio
+
+  return dates.map((date) => {
+    const point = { date };
+    const balances = new Map();
+    for (const account of state.accounts) {
+      const history = histories.get(account.id);
+      let cursor = cursors.get(account.id);
+      while (cursor < history.length && history[cursor].date <= date) cursor++;
+      cursors.set(account.id, cursor);
+      if (cursor > 0) {
+        const provider = providerOf.get(account.id);
+        balances.set(provider, (balances.get(provider) ?? 0) + history[cursor - 1].balance);
+      }
+    }
+    const flows = flowsByDate.get(date) ?? new Map();
+    for (const provider of providers) {
+      const value = balances.get(provider);
+      if (value === undefined) {
+        point[provider] = twrs.get(provider) ?? null;
+        continue;
+      }
+      if (!values.has(provider)) {
+        twrs.set(provider, 0); // baseline at the provider's first snapshot
+      } else {
+        const previous = values.get(provider);
+        if (previous > 0) {
+          const growth = (value - previous - (flows.get(provider) ?? 0)) / previous;
+          twrs.set(provider, (1 + twrs.get(provider)) * (1 + growth) - 1);
+        }
+      }
+      values.set(provider, value);
+      point[provider] = twrs.get(provider);
+    }
+    return point;
+  });
+}
+
+/**
  * Growth over a period per account: balance(end) − balance(start) − that account's
  * net contributions in (start, end]. Includes archived accounts (their history counts).
  * Returns [{ account, startBalance, endBalance, netContributions, growth, pct }],

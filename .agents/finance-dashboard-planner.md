@@ -51,6 +51,7 @@ src/components/finance/
     AccountTypeChart.js      Balances over time grouped by account type (stacked area)
     TwrChart.js              Cumulative time-weighted return over time (line)
     AccountTwrChart.js       Cumulative TWR per account (multi-line)
+    ProviderTwrChart.js      Cumulative TWR per provider (multi-line)
     DateRangePicker.js       Start/end inputs; drives every chart and stat on the tab
     ChartCard.js             Shared chart card wrapper + dark-theme Recharts constants
     AllocationChart.js       One reusable pie; prop groupBy = account | type | provider | owner
@@ -189,6 +190,7 @@ src/components/finance/
 - [x] **14. ISA panel** — `IsaPanel.js` incl. tax year editor.
 - [x] **14b. Native Save As** — `saveFile` uses `showSaveFilePicker` (user picks name/location, can overwrite; cancel leaves the doc dirty and aborts a guarded Open/New), plain-download fallback where unsupported.
 - [x] **14c. Per-account TWR chart** — `twrSeriesByAccount` (analytics) chains each account's own snapshots (r_i = (B_i − B_{i−1} − F_i)/B_{i−1}); `AccountTwrChart.js` renders one line per account, range-aware like the other charts.
+- [x] **14d. Per-provider TWR chart** — `twrSeriesByProvider` (analytics): portfolio-TWR math restricted to each provider's accounts (V = carried balance sum, F = their net flows per point); `ProviderTwrChart.js` renders one line per provider.
 - [ ] **15. Styling pass** — consistent with site theme tokens; check at mobile width too.
 - [ ] **16. End-to-end manual verification** — exercise the full workflow in `npm start`: create accounts → bulk updates across several dates → charts/cards/stats/ISA update correctly → export → import roundtrip → validation errors on a doctored file → archive behaviour → refresh persistence.
 - [ ] **17. Final review** — walk the design doc section by section and confirm every requirement is met (or consciously deferred with the user). `npm run build` passes clean.
@@ -322,4 +324,11 @@ Append one entry per step taken. Format: `### YYYY-MM-DD — <step/action>` then
 - User request: a TWR line chart for each individual account.
 - `lib/analytics.js`: `twrSeriesByAccount(state)` — cumulative TWR per account over the union of all snapshot dates, chaining r_i = (B_i − B_{i−1} − F_i)/B_{i−1} from the account's own snapshots (F = the snapshot's contribution − withdrawal, which is exactly the flow since the previous snapshot per the data model). Null before an account's first snapshot, 0 at it, zero-base periods skipped.
 - `dashboard/AccountTwrChart.js`: multi-line chart, one line per account with snapshots in `account.colour`, clipped by the dashboard range via `seriesInRange`; placed directly after the portfolio TwrChart.
+- `npm run build` compiled successfully.
+
+
+### 2026-07-19 — Step 14d (per-provider TWR chart)
+- User request: TWR by company — mapped to the account `provider` field (Vanguard etc.), which is the document's "company" concept.
+- `lib/analytics.js`: `twrSeriesByProvider(state)` — the portfolio TWR computation restricted per provider: at each union date, V = carried sum of that provider's account balances, F = net flows recorded at that date for its accounts (pre-grouped in one pass); baseline 0 at a provider's first snapshot, zero-base periods skipped.
+- `dashboard/ProviderTwrChart.js`: multi-line chart, one line per provider (palette colours), range-clipped like the other charts; placed after AccountTwrChart.
 - `npm run build` compiled successfully.
