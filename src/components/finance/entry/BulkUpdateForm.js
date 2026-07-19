@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { addSnapshots } from "../lib/actions";
 import { activeAccounts, latestByAccount } from "../lib/model";
-import { gbp, formatDate, todayString } from "../lib/format";
+import { gbp, formatDate, todayString, parseMoney } from "../lib/format";
 
 // The key data-entry screen: one row per active account, many snapshots per save.
 // A row's non-empty balance field IS the selection (no checkboxes). Keyboard flow:
@@ -12,15 +12,6 @@ const inputClass =
   "h-10 rounded-lg border-b-[1px] border-b-gray-600 bg-[#191b1e] text-lightText px-3 outline-none focus-visible:outline-designColor focus-visible:border-b-transparent duration-300";
 
 const EMPTY_DRAFT = { balance: "", contribution: "", withdrawal: "", notes: "", open: false };
-
-// null = field left empty; NaN = user typed something that isn't a number >= 0.
-// Accepts "£1,234.56" paste as well as plain "1234.56".
-function parseMoney(text) {
-  const trimmed = text.trim();
-  if (trimmed === "") return null;
-  const value = Number(trimmed.replace(/[£,]/g, ""));
-  return Number.isFinite(value) && value >= 0 ? value : NaN;
-}
 
 function BulkUpdateForm({ state, run }) {
   const accounts = useMemo(() => activeAccounts(state), [state]);

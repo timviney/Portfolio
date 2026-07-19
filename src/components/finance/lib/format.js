@@ -21,6 +21,17 @@ export function formatDate(iso) {
   return `${day} ${MONTHS[month - 1]} ${year}`;
 }
 
+/**
+ * Parses a typed money amount. null = field left empty; NaN = invalid input.
+ * Accepts pasted "£1,234.56" as well as plain "1234.56".
+ */
+export function parseMoney(text) {
+  const trimmed = String(text).trim();
+  if (trimmed === "") return null;
+  const value = Number(trimmed.replace(/[£,]/g, ""));
+  return Number.isFinite(value) && value >= 0 ? value : NaN;
+}
+
 /** Today's date as a local YYYY-MM-DD string (not toISOString — that uses UTC). */
 export function todayString() {
   const now = new Date();

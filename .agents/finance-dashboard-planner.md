@@ -172,7 +172,7 @@ src/components/finance/
 - [x] **6. Analytics + ISA** — `lib/analytics.js`, `lib/isa.js` per the Key algorithms section.
 - [x] **7. App shell** — `FinanceDashboard.js`: state + localStorage write-through + tab bar + empty state; register `/finance` route in `src/App.js`. App builds and renders with default data.
 - [x] **8. Bulk update form** — `entry/BulkUpdateForm.js` per the UI design. This is the most important screen in the app: optimise for keyboard flow (tab straight down the balance column).
-- [ ] **9. Account management** — `entry/AccountList.js` + `entry/AccountForm.js`: create/edit/archive, inline new owner/type, expandable row with snapshot history (edit/delete).
+- [x] **9. Account management** — `entry/AccountList.js` + `entry/AccountForm.js`: create/edit/archive, inline new owner/type, expandable row with snapshot history (edit/delete).
 - [ ] **10. Import/Export** — `data/ImportExport.js` with validation errors surfaced readably and a confirm-before-replace dialog.
 - [ ] **11. Summary cards + portfolio chart** — `SummaryCards.js`, `PortfolioValueChart.js`.
 - [ ] **12. Remaining charts** — `AccountBalancesChart.js`, `AllocationChart.js` × 4.
@@ -238,4 +238,10 @@ Append one entry per step taken. Format: `### YYYY-MM-DD — <step/action>` then
 - `entry/BulkUpdateForm.js`, wired into the Update tab as `<BulkUpdateForm state={state} run={run} />`. Date picker (defaults to today via `todayString()`), one row per active account (colour dot, name, last balance + its date, placeholder = last balance), per-row `+` toggle revealing contribution/withdrawal/notes, save via `addSnapshots`.
 - Keyboard flow per the step's emphasis: wrapped in `<form>` so Enter saves from any field; the per-row toggle is `tabIndex={-1}` so Tab walks balance → balance; first balance input is `autoFocus`; `inputMode="decimal"` for mobile keypads.
 - Deviations/decisions: (1) save is skipped-silently only for *completely* empty rows — a row with flows/notes but no balance blocks the save with a naming error rather than being silently dropped (prevents lost intent; one extra guard clause); (2) invalid amounts (non-numeric/negative) block the whole save with a naming error instead of partial-saving, so a typo never creates a half-complete batch; (3) `parseMoney` accepts pasted "£1,234.56"; (4) date is kept after save (backfilling several dates in a row is a real workflow) while row inputs clear; (5) guard message for the all-accounts-archived edge case.
+- `npm run build` compiled successfully.
+
+### 2026-07-19 — Step 9 (account management)
+- `entry/AccountForm.js`: create/edit in one form (name/provider/owner/type/colour/notes). Owner & type are free-text inputs with `<datalist>` suggestions from config (unique ids via `useId`); new strings flow into config via `configFromAccount` in actions.js. Colour uses native `<input type="color">`; in create mode it defaults to the palette colour the account would get anyway (`defaultColour` prop = `colourFor(accounts.length)`), so palette-by-index behaviour is preserved. Currency deliberately not editable (locked decision: GBP-assumed, display-only v1) — shown read-only in the expanded row instead.
+- `entry/AccountList.js`: header (active/archived counts + Add button; add form auto-opens when zero accounts so the empty-state "Create your first account" button lands somewhere useful), all accounts listed including archived (dimmed + badge), expandable rows showing currency/notes, Edit details (inline AccountForm), Archive/Un-archive, and SnapshotHistory (most-recent-first table with inline edit row + window.confirm delete — low-prominence typo-fixing as specified).
+- Refactor: `parseMoney` moved from BulkUpdateForm into `lib/format.js` (input parsing is formatting's inverse — one home for money-string logic) and is now shared by the bulk form and the snapshot editor.
 - `npm run build` compiled successfully.
