@@ -1,7 +1,7 @@
 // Selectors: derive display-ready data from the document.
 // Pure functions, no React. All date comparisons are lexicographic (YYYY-MM-DD strings).
 
-import { colourFor } from "./format";
+import { colourFor, accountLabel } from "./format";
 
 export const activeAccounts = (state) => state.accounts.filter((account) => !account.archived);
 
@@ -160,7 +160,7 @@ export function allocationBy(state, groupBy, asOf = null) {
   for (const account of activeAccounts(state)) {
     const balance = latest.get(account.id)?.balance ?? 0;
     if (balance <= 0) continue;
-    const name = groupBy === "account" ? account.name : account[groupBy] || "Unknown";
+    const name = groupBy === "account" ? accountLabel(account) : account[groupBy] || "Unknown";
     const colour = groupBy === "account" ? account.colour : undefined;
     const group = groups.get(name) ?? { name, value: 0, colour };
     group.value += balance;

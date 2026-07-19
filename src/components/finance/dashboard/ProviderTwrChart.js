@@ -12,12 +12,13 @@ import {
 import { seriesInRange } from "../lib/model";
 import { twrSeriesByProvider } from "../lib/analytics";
 import { colourFor, formatDate, pct } from "../lib/format";
-import ChartCard, { NoData, chartAxisProps, chartTooltipStyle } from "./ChartCard";
+import ChartCard, { NoData, chartAxisProps, chartTooltipStyle, useHiddenSeries } from "./ChartCard";
 
 // Cumulative time-weighted return per provider (company) — one line per provider
 // that has at least one snapshot across its accounts. Approximate — see TwrChart.
 
 function ProviderTwrChart({ state, range }) {
+  const { hidden, legendProps } = useHiddenSeries();
   const providers = [
     ...new Set(
       state.accounts
@@ -43,7 +44,7 @@ function ProviderTwrChart({ state, range }) {
                 labelFormatter={formatDate}
                 formatter={(value) => pct(value)}
               />
-              <Legend wrapperStyle={{ fontSize: "0.8rem", color: "#9ca3af" }} />
+              <Legend {...legendProps} />
               {providers.map((provider, index) => (
                 <Line
                   key={provider}
@@ -55,6 +56,7 @@ function ProviderTwrChart({ state, range }) {
                   dot={false}
                   activeDot={{ r: 4 }}
                   connectNulls
+                  hide={hidden.has(provider)}
                 />
               ))}
             </LineChart>

@@ -332,3 +332,16 @@ Append one entry per step taken. Format: `### YYYY-MM-DD — <step/action>` then
 - `lib/analytics.js`: `twrSeriesByProvider(state)` — the portfolio TWR computation restricted per provider: at each union date, V = carried sum of that provider's account balances, F = net flows recorded at that date for its accounts (pre-grouped in one pass); baseline 0 at a provider's first snapshot, zero-base periods skipped.
 - `dashboard/ProviderTwrChart.js`: multi-line chart, one line per provider (palette colours), range-clipped like the other charts; placed after AccountTwrChart.
 - `npm run build` compiled successfully.
+
+
+### 2026-07-19 — Stacked-area rendering fix + legend toggling
+- User report: stacked area charts overlapped incorrectly around zero values. Two compounding causes fixed in both area charts (`AccountBalancesChart`, `AccountTypeChart`): (1) `type="monotone"` smoothing overshoots at zero boundaries — changed to `type="linear"`; (2) pre-start nulls in a stack make Recharts misalign areas — nulls are now mapped to 0 in the chart data (truthful for a stack: a not-yet-started series contributes nothing), and `connectNulls` removed.
+- User request: Highcharts-style legend click to hide/show series. Added `useHiddenSeries()` hook in `dashboard/ChartCard.js` (hidden-key set, legend onClick toggle, dimmed formatter) and wired it into all four multi-series charts (both area charts, AccountTwrChart, ProviderTwrChart) via Recharts' `hide` prop. Not applied to the allocation pies — hiding slices there would silently distort the remaining percentages.
+- `npm run build` compiled successfully.
+
+
+### 2026-07-19 — Account display names include provider
+- User request: show " - {company}" when displaying accounts. Added `accountLabel(account)` to `lib/format.js` ("Name - Provider", bare name when no provider).
+- Applied at every place an account is identified by name alone: BulkUpdateForm rows (+ its validation error names), AccountBalancesChart and AccountTwrChart legends/tooltips, StatsPanel growth-by-account table, and `allocationBy("account")` pie slice names (in `lib/model.js` — a side benefit: two same-named accounts at different providers no longer merge into one slice).
+- Deliberately NOT applied to AccountList rows: the provider is already shown in the row's sub-line, so the suffix would duplicate it.
+- `npm run build` compiled successfully.

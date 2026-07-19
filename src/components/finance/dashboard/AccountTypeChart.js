@@ -11,12 +11,13 @@ import {
 } from "recharts";
 import { balanceSeriesByType, seriesInRange } from "../lib/model";
 import { colourFor, formatDate, gbp, gbpShort } from "../lib/format";
-import ChartCard, { NoData, chartAxisProps, chartTooltipStyle } from "./ChartCard";
+import ChartCard, { NoData, chartAxisProps, chartTooltipStyle, useHiddenSeries } from "./ChartCard";
 
-// Balances over time grouped by account type (stacked area). A type's area starts
-// at the first snapshot of any account of that type and carries forward after.
+// Balances over time grouped by account type (stacked area). Same rendering rules
+// as AccountBalancesChart: zeros (not nulls) in the stack, linear interpolation.
 
 function AccountTypeChart({ state, range }) {
+  const { hidden, legendProps } = useHiddenSeries();
   const types = [
     ...new Set(
       state.accounts
@@ -24,7 +25,11 @@ function AccountTypeChart({ state, range }) {
         .map((account) => account.type || "Unknown")
     ),
   ];
-  const series = seriesInRange(balanceSeriesByType(state), range.start, range.end);
+  const series = seriesInRange(balanceSeriesByType(state), range.start, range.end).map((point) => {
+    const next = { ...point };
+    for (const type of types) next[type] = next[type] ?? 0;
+    return next;
+  });
 
   return (
     <ChartCard title="Balances by account type">
@@ -42,17 +47,17 @@ function AccountTypeChart({ state, range }) {
                 labelFormatter={formatDate}
                 formatter={(value) => gbp(value)}
               />
-              <Legend wrapperStyle={{ fontSize: "0.8rem", color: "#9ca3af" }} />
+              <Legend {...legendProps} />
               {types.map((type, index) => (
                 <Area
                   key={type}
-                  type="monotone"
+                  type="linear"
                   dataKey={type}
                   stackId="1"
                   stroke={colourFor(index)}
                   fill={colourFor(index)}
                   fillOpacity={0.4}
-                  connectNulls
+                  hide={hidden.has(type)}
                 />
               ))}
             </AreaChart>

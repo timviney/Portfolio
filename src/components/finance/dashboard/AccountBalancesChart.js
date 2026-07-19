@@ -10,18 +10,26 @@ import {
   Legend,
 } from "recharts";
 import { balanceSeriesByAccount, seriesInRange } from "../lib/model";
-import { formatDate, gbp, gbpShort } from "../lib/format";
-import ChartCard, { NoData, chartAxisProps, chartTooltipStyle } from "./ChartCard";
+import { formatDate, gbp, gbpShort, accountLabel } from "../lib/format";
+import ChartCard, { NoData, chartAxisProps, chartTooltipStyle, useHiddenSeries } from "./ChartCard";
 
 // Per-account balances over time (stacked area) — one area per account that has at
-// least one snapshot, coloured by account.colour. Areas start at each account's
-// first snapshot (null before that) and carry forward after.
+// least one snapshot, coloured by account.colour. Areas are zero before the account
+// starts (nulls in a stack make Recharts misalign the areas) and use linear
+// interpolation (monotone smoothing overshoots at zero and makes areas overlap).
 
 function AccountBalancesChart({ state, range }) {
+  const { hidden, legendProps } = useHiddenSeries();
   const accountsWithData = state.accounts.filter((account) =>
     state.snapshots.some((snapshot) => snapshot.accountId === account.id)
   );
-  const series = seriesInRange(balanceSeriesByAccount(state, accountsWithData), range.start, range.end);
+  const series = seriesInRange(balanceSeriesByAccount(state, accountsWithData), range.start, range.end).map(
+    (point) => {
+      const next = { ...point };
+      for (const account of accountsWithData) next[account.id] = next[account.id] ?? 0;
+      return next;
+    }
+  );
 
   return (
     <ChartCard title="Account balances">
@@ -39,18 +47,18 @@ function AccountBalancesChart({ state, range }) {
                 labelFormatter={formatDate}
                 formatter={(value) => gbp(value)}
               />
-              <Legend wrapperStyle={{ fontSize: "0.8rem", color: "#9ca3af" }} />
+              <Legend {...legendProps} />
               {accountsWithData.map((account) => (
                 <Area
                   key={account.id}
-                  type="monotone"
+                  type="linear"
                   dataKey={account.id}
-                  name={account.name}
+                  name={accountLabel(account)}
                   stackId="1"
                   stroke={account.colour}
                   fill={account.colour}
                   fillOpacity={0.4}
-                  connectNulls
+                  hide={hidden.has(account.id)}
                 />
               ))}
             </AreaChart>

@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { addSnapshots } from "../lib/actions";
 import { activeAccounts, latestByAccount } from "../lib/model";
-import { gbp, formatDate, todayString, parseMoney } from "../lib/format";
+import { gbp, formatDate, todayString, parseMoney, accountLabel } from "../lib/format";
 
 // The key data-entry screen: one row per active account, many snapshots per save.
 // A row's non-empty balance field IS the selection (no checkboxes). Keyboard flow:
@@ -38,7 +38,7 @@ function BulkUpdateForm({ state, run }) {
       const withdrawal = parseMoney(draft.withdrawal);
       if (balance === null && contribution === null && withdrawal === null && !draft.notes.trim()) continue;
       if (Number.isNaN(balance) || Number.isNaN(contribution) || Number.isNaN(withdrawal)) {
-        invalid.push(account.name);
+        invalid.push(accountLabel(account));
       } else if (balance === null) {
         invalid.push(`${account.name} (a balance is needed to record flows/notes)`);
       } else {
@@ -119,7 +119,7 @@ function BulkUpdateForm({ state, run }) {
                     style={{ backgroundColor: account.colour }}
                   />
                   <div className="min-w-0">
-                    <p className="font-titleFont text-lightText truncate">{account.name}</p>
+                    <p className="font-titleFont text-lightText truncate">{accountLabel(account)}</p>
                     <p className="text-xs text-gray-400 font-bodyFont">
                       {last ? `${gbp(last.balance)} · ${formatDate(last.date)}` : "No snapshots yet"}
                     </p>

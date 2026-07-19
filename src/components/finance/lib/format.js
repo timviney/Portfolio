@@ -57,3 +57,7 @@ const PALETTE = [
 
 /** Stable colour for the Nth item in a grouping. */
 export const colourFor = (index) => PALETTE[index % PALETTE.length];
+
+/** "Vanguard S&S ISA - Vanguard" — account name with provider suffix for display. */
+export const accountLabel = (account) =>
+  account.provider ? `${account.name} - ${account.provider}` : account.name;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 // Shared card wrapper for dashboard charts, plus the Recharts style constants so
 // every chart matches the site's dark theme. Charts keep zero business logic —
@@ -17,6 +17,30 @@ export const chartAxisProps = {
   fontSize: 12,
   tickLine: false,
 };
+
+/**
+ * Legend click-to-toggle (Highcharts-style). Wire `legendProps` into <Legend> and
+ * pass `hide={hidden.has(key)}` to each series. Hidden entries are dimmed.
+ */
+export function useHiddenSeries() {
+  const [hidden, setHidden] = useState(new Set());
+  const legendProps = {
+    onClick: (entry) => {
+      const key = entry.dataKey ?? entry.value;
+      setHidden((prev) => {
+        const next = new Set(prev);
+        if (next.has(key)) next.delete(key);
+        else next.add(key);
+        return next;
+      });
+    },
+    formatter: (value, entry) => (
+      <span style={{ opacity: hidden.has(entry.dataKey ?? entry.value) ? 0.35 : 1 }}>{value}</span>
+    ),
+    wrapperStyle: { fontSize: "0.8rem", color: "#9ca3af", cursor: "pointer" },
+  };
+  return { hidden, legendProps };
+}
 
 function ChartCard({ title, footnote, children }) {
   return (

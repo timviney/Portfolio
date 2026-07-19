@@ -11,13 +11,14 @@ import {
 } from "recharts";
 import { seriesInRange } from "../lib/model";
 import { twrSeriesByAccount } from "../lib/analytics";
-import { formatDate, pct } from "../lib/format";
-import ChartCard, { NoData, chartAxisProps, chartTooltipStyle } from "./ChartCard";
+import { formatDate, pct, accountLabel } from "../lib/format";
+import ChartCard, { NoData, chartAxisProps, chartTooltipStyle, useHiddenSeries } from "./ChartCard";
 
 // Cumulative time-weighted return per account — one line per account that has at
 // least one snapshot, coloured by account.colour. Approximate — see TwrChart.
 
 function AccountTwrChart({ state, range }) {
+  const { hidden, legendProps } = useHiddenSeries();
   const accountsWithData = state.accounts.filter((account) =>
     state.snapshots.some((snapshot) => snapshot.accountId === account.id)
   );
@@ -39,18 +40,19 @@ function AccountTwrChart({ state, range }) {
                 labelFormatter={formatDate}
                 formatter={(value) => pct(value)}
               />
-              <Legend wrapperStyle={{ fontSize: "0.8rem", color: "#9ca3af" }} />
+              <Legend {...legendProps} />
               {accountsWithData.map((account) => (
                 <Line
                   key={account.id}
                   type="monotone"
                   dataKey={account.id}
-                  name={account.name}
+                  name={accountLabel(account)}
                   stroke={account.colour}
                   strokeWidth={2}
                   dot={false}
                   activeDot={{ r: 4 }}
                   connectNulls
+                  hide={hidden.has(account.id)}
                 />
               ))}
             </LineChart>

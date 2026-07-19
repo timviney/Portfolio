@@ -7,7 +7,7 @@ import {
   growthByAccount,
   growthByType,
 } from "../lib/analytics";
-import { formatDate, gbp, pct } from "../lib/format";
+import { formatDate, gbp, pct, accountLabel } from "../lib/format";
 import ChartCard, { NoData } from "./ChartCard";
 
 // Stats panel: the design doc's Analytics v1 list over the dashboard's selected
@@ -76,7 +76,7 @@ function StatsPanel({ state, range }) {
   const twr = twrOverRange(state, start, end);
   const byAccount = growthByAccount(state, start, end).map((row) => ({
     ...row,
-    name: row.account.name,
+    name: accountLabel(row.account),
   }));
   const byType = growthByType(state, start, end).map((row) => ({ ...row, name: row.type }));
 
