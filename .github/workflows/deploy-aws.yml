@@ -15,8 +15,8 @@ concurrency:
 jobs:
   build:
     env:
-      REACT_APP_DATAACCESS_URL: ${{ secrets.REACT_APP_DATAACCESS_URL }}
-      REACT_APP_SUDOKU_URL: ${{ secrets.REACT_APP_SUDOKU_URL }}
+      VITE_DATAACCESS_URL: ${{ secrets.REACT_APP_DATAACCESS_URL }}
+      VITE_SUDOKU_URL: ${{ secrets.REACT_APP_SUDOKU_URL }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,10 +26,10 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '14'
+          node-version: '22'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build
         run: npm run build

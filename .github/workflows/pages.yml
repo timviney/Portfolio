@@ -29,12 +29,12 @@ jobs:
           fetch-depth: 0  # Ensures you pull all history for version comparisons
 
       - name: Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: '14'  # Adjust your Node.js version as necessary
+          node-version: '22'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build
         run: npm run build

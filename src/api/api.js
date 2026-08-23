@@ -1,5 +1,5 @@
-const sudokuApi = process.env.REACT_APP_SUDOKU_URL;
-const dataAccessApi = process.env.REACT_APP_DATAACCESS_URL;
+const sudokuApi = import.meta.env.VITE_SUDOKU_URL;
+const dataAccessApi = import.meta.env.VITE_DATAACCESS_URL;
 
 export const wakeUpDatabase = async () => {
     const post = {
