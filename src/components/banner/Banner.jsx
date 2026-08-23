@@ -1,5 +1,5 @@
 import React from "react";
-import RoleBoard from "./RoleBoard";
+import RoleLine from "./RoleLine";
 import { FaLinkedinIn, FaGithub } from "react-icons/fa";
 import links from "../../config";
 import { cartoonMe } from "../../assets/index";
@@ -24,8 +24,11 @@ const Banner = () => {
           </span>
         </h1>
 
-        <h2 className="rise w-full max-w-[31rem]" style={{ "--d": "260ms" }}>
-          <RoleBoard />
+        <h2
+          className="rise font-display text-3xl font-semibold tracking-tight text-text sm:text-4xl"
+          style={{ "--d": "260ms" }}
+        >
+          <RoleLine />
         </h2>
 
         <p
