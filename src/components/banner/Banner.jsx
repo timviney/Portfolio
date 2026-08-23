@@ -1,17 +1,10 @@
 import React from "react";
-import useTypewriter from "../../hooks/useTypewriter";
+import RoleBoard from "./RoleBoard";
 import { FaLinkedinIn, FaGithub } from "react-icons/fa";
 import links from "../../config";
 import { cartoonMe } from "../../assets/index";
 
 const Banner = () => {
-  const [text] = useTypewriter({
-    words: ["C# Developer.", "Analytical Consultant.", "Software Engineer."],
-    typeSpeed: 20,
-    deleteSpeed: 10,
-    delaySpeed: 2000,
-  });
-
   return (
     <section
       id="home"
@@ -31,12 +24,8 @@ const Banner = () => {
           </span>
         </h1>
 
-        <h2
-          className="rise font-display text-2xl font-semibold text-text sm:text-3xl"
-          style={{ "--d": "260ms" }}
-        >
-          {text}
-          <span className="cursor-blink text-accent">|</span>
+        <h2 className="rise w-full max-w-[31rem]" style={{ "--d": "260ms" }}>
+          <RoleBoard />
         </h2>
 
         <p
