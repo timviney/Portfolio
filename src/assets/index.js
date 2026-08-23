@@ -1,6 +1,5 @@
 import cartoonMe from "./images/cartoonMe.png";
 import me from "./images/me.png";
-import contactImg from "./images/contact/contactImg.png";
 import projectSudoku from "./images/projects/sudoku.png";
 import projectDataAccess from "./images/projects/dataaccess.png";
 import projectTanks from "./images/projects/tanks.png";
@@ -23,7 +22,6 @@ const pubPointGallery = [
 
 export {
   me,
-  contactImg,
   projectSudoku,
   projectDataAccess,
   projectTanks,

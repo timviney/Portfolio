@@ -1,16 +1,14 @@
 import React from "react";
 import links from "../../config";
-import { contactImg } from "../../assets/index";
+import { HiOutlineMail } from "react-icons/hi";
 import { FaLinkedinIn, FaGithub } from "react-icons/fa";
 
 const ContactLeft = () => {
   return (
     <div className="card-dark flex w-full flex-col justify-center gap-8 rounded-lg p-4 shadow-shadowOne lgl:w-[35%] lgl:p-8">
-      <img
-        className="mb-2 h-64 w-full rounded-md border border-line-soft object-cover"
-        src={contactImg}
-        alt="contactImg"
-      />
+      <div className="relative mb-2 flex h-44 w-full items-center justify-center overflow-hidden rounded-md border border-line-soft bg-panel-2">
+        <HiOutlineMail className="relative text-8xl text-accent-soft" />
+      </div>
       <div className="flex flex-col gap-4">
         <h3 className="font-display text-3xl font-bold text-text">Tim Viney</h3>
         <p className="text-base font-normal text-muted">Software Developer</p>
