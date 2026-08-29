@@ -27,8 +27,8 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
-      <div className="site-fx min-h-screen w-full bg-page font-body text-text" id="app">
-        <Navbar />
+      <Navbar />
+      <main className="pt-16 site-fx min-h-screen w-full bg-page font-body text-text" id="app">
         <Routes>
           <Route
             path="/"
@@ -50,7 +50,7 @@ function App() {
         </Routes>
         <Footer />
         <FooterBottom />
-      </div>
+      </main>
     </Router>
   );
 }

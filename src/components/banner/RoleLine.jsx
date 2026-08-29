@@ -68,10 +68,14 @@ export default function RoleLine() {
 
   return (
     <>
-      <span className="sr-only">
+      <span className="sr-only overflow-hidden">
         Roles: C# Developer, Analytical Consultant, Software Engineer
       </span>
-      <span ref={ref} className="role-line" aria-hidden="true">
+      <span
+        ref={ref}
+        className="role-line inline-block leading-tight h-[2lh] sm:min-h-0"
+        aria-hidden="true"
+      >
         <span className="role-line-text">C# Developer</span>
         <span className="role-line-dot">.</span>
       </span>
